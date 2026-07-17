@@ -237,8 +237,8 @@ export function t(
 ): string {
   let text: string = currentLocale()[key] ?? en[key];
   if (vars) {
-    for (const [name, value] of Object.entries(vars)) {
-      text = text.split(`{${name}}`).join(String(value));
+    for (const name of Object.keys(vars)) {
+      text = text.split(`{${name}}`).join(String(vars[name]));
     }
   }
   return text;

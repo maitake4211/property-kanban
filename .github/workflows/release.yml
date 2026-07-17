@@ -35,22 +35,22 @@ jobs:
             exit 1
           fi
 
-      # One attestation per asset: verifiers that expect a single subject
-      # per attestation reject multi-subject bundles.
-      - name: Attest build provenance (main.js)
-        uses: actions/attest-build-provenance@v2
-        with:
-          subject-path: main.js
+      # Stamp styles.css with the release version so every release asset is
+      # byte-unique. Identical bytes across releases share a sha256 digest and
+      # therefore inherit attestations from prior releases.
+      - name: Stamp styles.css with version
+        run: |
+          tag="${GITHUB_REF#refs/tags/}"
+          printf '/* Property Kanban v%s */\n' "$tag" | cat - styles.css > styles.css.tmp
+          mv styles.css.tmp styles.css
 
-      - name: Attest build provenance (manifest.json)
-        uses: actions/attest-build-provenance@v2
+      - name: Attest build provenance
+        uses: actions/attest-build-provenance@v4
         with:
-          subject-path: manifest.json
-
-      - name: Attest build provenance (styles.css)
-        uses: actions/attest-build-provenance@v2
-        with:
-          subject-path: styles.css
+          subject-path: |
+            main.js
+            manifest.json
+            styles.css
 
       - name: Create release
         env:

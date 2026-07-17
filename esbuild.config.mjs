@@ -1,6 +1,6 @@
 import esbuild from "esbuild";
 import process from "process";
-import builtins from "builtin-modules";
+import { builtinModules } from "node:module";
 import { readFileSync } from "fs";
 
 const prod = process.argv[2] === "production";
@@ -31,7 +31,8 @@ esbuild
       "@lezer/common",
       "@lezer/highlight",
       "@lezer/lr",
-      ...builtins,
+      ...builtinModules,
+      ...builtinModules.map((m) => `node:${m}`),
     ],
     format: "cjs",
     target: "es2018",

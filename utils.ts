@@ -125,7 +125,7 @@ export function setListField(
     const line = lines[i];
     const colonIdx = line.indexOf(":");
     const key = colonIdx === -1 ? "" : line.slice(0, colonIdx).trim();
-    const isTopLevel = !/^\s/.test(line) && !line.trimStart().startsWith("-");
+    const isTopLevel = !/^\s/.test(line) && !line.startsWith("-");
     if (key === field && isTopLevel) {
       // Skip this line and any following indented block/list lines.
       let j = i + 1;

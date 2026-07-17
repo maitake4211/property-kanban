@@ -115,7 +115,7 @@ export default class PropertyKanbanPlugin extends Plugin {
     this.registerView(VIEW_TYPE, (leaf) => new KanbanView(leaf, this));
 
     this.addRibbonIcon("layout-dashboard", t("ribbon.open"), () => {
-      this.activateView();
+      void this.activateView();
     });
 
     this.addCommand({
@@ -141,11 +141,11 @@ export default class PropertyKanbanPlugin extends Plugin {
       await newLeaf.setViewState({ type: VIEW_TYPE, active: true });
       leaf = newLeaf;
     }
-    workspace.revealLeaf(leaf);
+    await workspace.revealLeaf(leaf);
   }
 
   async loadSettings() {
-    const saved = await this.loadData();
+    const saved = (await this.loadData()) as Partial<PropertyKanbanSettings> | null;
     this.settings = Object.assign({}, DEFAULT_SETTINGS, saved);
   }
 
@@ -157,7 +157,7 @@ export default class PropertyKanbanPlugin extends Plugin {
   refreshViews(): void {
     for (const leaf of this.app.workspace.getLeavesOfType(VIEW_TYPE)) {
       const view = leaf.view;
-      if (view instanceof KanbanView) view.refresh();
+      if (view instanceof KanbanView) void view.refresh();
     }
   }
 
@@ -329,7 +329,7 @@ class KanbanView extends ItemView {
   plugin: PropertyKanbanPlugin;
   private fileMap: Map<string, Record<string, string>> = new Map();
   private dragData: { filePath: string; sourceColumn: string; sourceLane?: string } | null = null;
-  private refreshTimer: ReturnType<typeof setTimeout> | null = null;
+  private refreshTimer: number | null = null;
   private settingsPopover: HTMLElement | null = null;
   private settingsPopoverCleanup: (() => void) | null = null;
 
@@ -422,8 +422,10 @@ class KanbanView extends ItemView {
 
   /** Debounced refresh to avoid rapid re-renders */
   private scheduleRefresh(): void {
-    if (this.refreshTimer) clearTimeout(this.refreshTimer);
-    this.refreshTimer = setTimeout(() => this.refresh(), 150);
+    if (this.refreshTimer) window.clearTimeout(this.refreshTimer);
+    this.refreshTimer = window.setTimeout(() => {
+      void this.refresh();
+    }, 150);
   }
 
   async refresh(): Promise<void> {
@@ -449,7 +451,9 @@ class KanbanView extends ItemView {
       cls: "nk-add-btn",
     });
     addBtn.addEventListener("click", () => {
-      new CardCreateModal(this.app, this.plugin, () => this.refresh(), this.fileMap).open();
+      new CardCreateModal(this.app, this.plugin, () => {
+          void this.refresh();
+        }, this.fileMap).open();
     });
 
     // Settings toggle button (gear icon)
@@ -540,8 +544,8 @@ class KanbanView extends ItemView {
 
       // Lane header
       const laneHeader = lane.createDiv({ cls: "nk-lane-header" });
-      laneHeader.createEl("span", { text: laneValue, cls: "nk-lane-title" });
-      laneHeader.createEl("span", { text: `${laneCards.length}`, cls: "nk-lane-count" });
+      laneHeader.createSpan({ text: laneValue, cls: "nk-lane-title" });
+      laneHeader.createSpan({ text: `${laneCards.length}`, cls: "nk-lane-count" });
 
       // Lane body: columns for sub-group
       const laneBody = lane.createDiv({ cls: "nk-lane-body" });
@@ -583,13 +587,13 @@ class KanbanView extends ItemView {
         const h = Math.max(150, Math.round(startHeight + delta));
         laneBody.style.height = `${h}px`;
       };
-      const onUp = async () => {
+      const onUp = () => {
         document.removeEventListener("mousemove", onMove);
         document.removeEventListener("mouseup", onUp);
         document.body.removeClass("nk-resizing-row");
         const h = parseInt(laneBody.style.height, 10);
         this.plugin.settings.laneHeights[key] = Number.isFinite(h) ? h : DEFAULT_LANE_HEIGHT;
-        await this.plugin.saveSettings();
+        void this.plugin.saveSettings();
       };
       document.addEventListener("mousemove", onMove);
       document.addEventListener("mouseup", onUp);
@@ -688,7 +692,7 @@ class KanbanView extends ItemView {
 
   private createPopoverSection(popover: HTMLElement, title: string): HTMLElement {
     const section = popover.createDiv({ cls: "nk-popover-section" });
-    section.createEl("div", { cls: "nk-popover-section-title", text: title });
+    section.createDiv({ cls: "nk-popover-section-title", text: title });
     return section.createDiv({ cls: "nk-popover-section-body" });
   }
 
@@ -699,44 +703,48 @@ class KanbanView extends ItemView {
   ): void {
     const allFields = this.collectFields();
     if (allFields.length === 0) {
-      parent.createEl("div", { cls: "nk-popover-empty", text: t("popover.noFields") });
+      parent.createDiv({ cls: "nk-popover-empty", text: t("popover.noFields") });
       return;
     }
 
     const laneRow = parent.createDiv({ cls: "nk-popover-row" });
-    laneRow.createEl("span", { cls: "nk-popover-row-label", text: t("popover.lane") });
+    laneRow.createSpan({ cls: "nk-popover-row-label", text: t("popover.lane") });
     const groupSelect = laneRow.createEl("select", { cls: "nk-group-select" });
     for (const field of allFields) {
       groupSelect.createEl("option", { text: field }).value = field;
     }
     groupSelect.value = this.plugin.settings.activeGroupField;
-    groupSelect.addEventListener("change", async () => {
+    groupSelect.addEventListener("change", () => {
+      void (async () => {
       this.plugin.settings.activeGroupField = groupSelect.value;
       await this.plugin.saveSettings();
       this.rerenderBoard(container);
       this.renderSettingsPopoverContent(popover, container);
+      })();
     });
 
     const colRow = parent.createDiv({ cls: "nk-popover-row" });
-    colRow.createEl("span", { cls: "nk-popover-row-label", text: t("popover.column") });
+    colRow.createSpan({ cls: "nk-popover-row-label", text: t("popover.column") });
     const subGroupSelect = colRow.createEl("select", { cls: "nk-group-select" });
     subGroupSelect.createEl("option", { text: t("popover.none") }).value = "";
     for (const field of allFields) {
       subGroupSelect.createEl("option", { text: field }).value = field;
     }
     subGroupSelect.value = this.plugin.settings.activeSubGroupField;
-    subGroupSelect.addEventListener("change", async () => {
+    subGroupSelect.addEventListener("change", () => {
+      void (async () => {
       this.plugin.settings.activeSubGroupField = subGroupSelect.value;
       await this.plugin.saveSettings();
       this.rerenderBoard(container);
       this.renderSettingsPopoverContent(popover, container);
+      })();
     });
   }
 
   private renderZoomControls(parent: HTMLElement, container: HTMLElement): void {
     const zoomGroup = parent.createDiv({ cls: "nk-zoom-group" });
     const zoomOut = zoomGroup.createEl("button", { text: "−", cls: "nk-zoom-btn", attr: { type: "button" } });
-    const zoomLabel = zoomGroup.createEl("span", {
+    const zoomLabel = zoomGroup.createSpan({
       text: `${this.plugin.settings.boardZoom}%`,
       cls: "nk-zoom-label",
     });
@@ -747,17 +755,21 @@ class KanbanView extends ItemView {
       this.plugin.settings.boardZoom = zoom;
       await this.plugin.saveSettings();
       zoomLabel.setText(`${zoom}%`);
-      const boardEl = container.querySelector(".nk-board") as HTMLElement | null;
+      const boardEl = container.querySelector<HTMLElement>(".nk-board");
       if (boardEl) boardEl.style.setProperty("zoom", `${zoom / 100}`);
     };
-    zoomOut.addEventListener("click", () => applyZoom(-10));
-    zoomIn.addEventListener("click", () => applyZoom(10));
+    zoomOut.addEventListener("click", () => {
+      void applyZoom(-10);
+    });
+    zoomIn.addEventListener("click", () => {
+      void applyZoom(10);
+    });
   }
 
   private renderVisibilityList(parent: HTMLElement, container: HTMLElement): void {
     const props = this.plugin.settings.cardDisplayProperties;
     if (props.length === 0) {
-      parent.createEl("div", { cls: "nk-popover-empty", text: t("popover.noDisplayProps") });
+      parent.createDiv({ cls: "nk-popover-empty", text: t("popover.noDisplayProps") });
       return;
     }
     for (const dp of props) {
@@ -768,10 +780,12 @@ class KanbanView extends ItemView {
       checkbox.checked = dp.enabled;
       checkbox.addClass("nk-vis-checkbox");
       label.createSpan({ text: dp.label || dp.field });
-      checkbox.addEventListener("change", async () => {
+      checkbox.addEventListener("change", () => {
+        void (async () => {
         dp.enabled = checkbox.checked;
         await this.plugin.saveSettings();
         this.rerenderBoard(container);
+        })();
       });
     }
   }
@@ -806,7 +820,7 @@ class KanbanView extends ItemView {
     rerender: () => void
   ): void {
     const section = panel.createDiv({ cls: "nk-order-section" });
-    section.createEl("span", { text: title, cls: "nk-order-title" });
+    section.createSpan({ text: title, cls: "nk-order-title" });
 
     const columns = this.resolveAllColumns(field);
     const list = section.createDiv({ cls: "nk-order-list" });
@@ -820,14 +834,15 @@ class KanbanView extends ItemView {
         row.setAttribute("draggable", "true");
 
         // Drag handle
-        row.createEl("span", { text: "⠿", cls: "nk-order-drag-handle" });
+        row.createSpan({ text: "⠿", cls: "nk-order-drag-handle" });
 
         // Visibility checkbox
         const checkbox = row.createEl("input");
         checkbox.type = "checkbox";
         checkbox.checked = !hidden;
         checkbox.addClass("nk-order-checkbox");
-        checkbox.addEventListener("change", async () => {
+        checkbox.addEventListener("change", () => {
+          void (async () => {
           const hiddenList = this.plugin.settings.hiddenColumns[field] ?? [];
           if (checkbox.checked) {
             this.plugin.settings.hiddenColumns[field] = hiddenList.filter((c) => c !== columns[i]);
@@ -838,9 +853,10 @@ class KanbanView extends ItemView {
           await this.plugin.saveSettings();
           buildRows();
           this.rerenderBoard(container);
+          })();
         });
 
-        row.createEl("span", { text: columns[i], cls: "nk-order-name" });
+        row.createSpan({ text: columns[i], cls: "nk-order-name" });
 
         // Drag events
         row.addEventListener("dragstart", () => {
@@ -858,7 +874,8 @@ class KanbanView extends ItemView {
         row.addEventListener("dragleave", () => {
           row.removeClass("nk-order-row-dragover");
         });
-        row.addEventListener("drop", async (e) => {
+        row.addEventListener("drop", (e) => {
+          void (async () => {
           e.preventDefault();
           row.removeClass("nk-order-row-dragover");
           if (dragIdx === null || dragIdx === i) return;
@@ -869,6 +886,7 @@ class KanbanView extends ItemView {
           dragIdx = null;
           buildRows();
           this.rerenderBoard(container);
+          })();
         });
       }
     };
@@ -879,12 +897,14 @@ class KanbanView extends ItemView {
       text: t("popover.reset"),
       cls: "nk-order-reset-btn",
     });
-    resetBtn.addEventListener("click", async () => {
+    resetBtn.addEventListener("click", () => {
+      void (async () => {
       delete this.plugin.settings.columnOrders[field];
       delete this.plugin.settings.hiddenColumns[field];
       await this.plugin.saveSettings();
       rerender();
       this.rerenderBoard(container);
+      })();
     });
   }
 
@@ -961,8 +981,8 @@ class KanbanView extends ItemView {
 
     // Column header
     const colHeader = col.createDiv({ cls: "nk-column-header" });
-    colHeader.createEl("span", { text: colName, cls: "nk-column-title" });
-    colHeader.createEl("span", {
+    colHeader.createSpan({ text: colName, cls: "nk-column-title" });
+    colHeader.createSpan({
       text: `${cards.length}`,
       cls: "nk-column-count",
     });
@@ -980,7 +1000,8 @@ class KanbanView extends ItemView {
       cardList.removeClass("nk-drag-over");
     });
 
-    cardList.addEventListener("drop", async (e) => {
+    cardList.addEventListener("drop", (e) => {
+      void (async () => {
       e.preventDefault();
       cardList.removeClass("nk-drag-over");
       if (!this.dragData) return;
@@ -1008,6 +1029,7 @@ class KanbanView extends ItemView {
       if (!sameColumn) parts.push(colName);
       new Notice(t("notice.cardMoved", { name: file.basename, dest: parts.join(" / ") }));
       this.dragData = null;
+      })();
     });
 
     // Cards
@@ -1017,7 +1039,7 @@ class KanbanView extends ItemView {
 
     // Add card button at bottom
     const addInCol = cardList.createDiv({ cls: "nk-add-in-column" });
-    addInCol.createEl("span", { text: t("board.addCard") });
+    addInCol.createSpan({ text: t("board.addCard") });
     addInCol.addEventListener("click", () => {
       const defaults: Record<string, string> = {};
       defaults[field] = colName;
@@ -1027,7 +1049,9 @@ class KanbanView extends ItemView {
       new CardCreateModal(
         this.app,
         this.plugin,
-        () => this.refresh(),
+        () => {
+          void this.refresh();
+        },
         this.fileMap,
         defaults
       ).open();
@@ -1082,7 +1106,7 @@ class KanbanView extends ItemView {
       if (!value) continue;
       if (dp.hideInvalid && value === "Invalid date") continue;
       const text = dp.prefix ? `${dp.prefix}${value}` : value;
-      tags.createEl("span", { text, cls: `nk-tag nk-tag-${dp.color}` });
+      tags.createSpan({ text, cls: `nk-tag nk-tag-${dp.color}` });
     }
 
     // Quick action button (e.g. set status to Done)
@@ -1097,12 +1121,14 @@ class KanbanView extends ItemView {
         text: qa.quickActionLabel || qa.quickActionValue,
         cls: "nk-card-quick-action",
       });
-      btn.addEventListener("click", async (e) => {
+      btn.addEventListener("click", (e) => {
+        void (async () => {
         e.stopPropagation();
         const file = this.app.vault.getAbstractFileByPath(card.path);
         if (!(file instanceof TFile)) return;
         await this.updateFrontmatterField(file, qa.quickActionField, qa.quickActionValue);
         new Notice(t("notice.quickAction", { name: card.name, field: qa.quickActionField, value: qa.quickActionValue }));
+        })();
       });
     }
   }
@@ -1120,7 +1146,7 @@ class KanbanView extends ItemView {
       this.app.workspace.setActiveLeaf(existing, { focus: true });
       return;
     }
-    this.app.workspace.getLeaf("tab").openFile(file);
+    void this.app.workspace.getLeaf("tab").openFile(file);
   }
 
   private showCardMenu(
@@ -1147,12 +1173,14 @@ class KanbanView extends ItemView {
     const addCopyOption = (label: string, build: () => string | null) => {
       const item = submenu.createDiv({ cls: "nk-card-menu-item" });
       item.setText(label);
-      item.addEventListener("click", async (e) => {
+      item.addEventListener("click", (e) => {
+        void (async () => {
         e.stopPropagation();
         menu.remove();
         const value = build();
         if (value === null) return;
         await this.copyToClipboard(value, label);
+        })();
       });
     };
 
@@ -1183,23 +1211,27 @@ class KanbanView extends ItemView {
 
     const setParentItem = menu.createDiv({ cls: "nk-card-menu-item" });
     setParentItem.setText(t("menu.setParent"));
-    setParentItem.addEventListener("click", async (e) => {
+    setParentItem.addEventListener("click", (e) => {
+      void (async () => {
       e.stopPropagation();
       menu.remove();
       await this.openParentSelect(filePath);
+      })();
     });
 
     if (hasParent) {
       const clearParentItem = menu.createDiv({ cls: "nk-card-menu-item" });
       clearParentItem.setText(t("menu.clearParent"));
-      clearParentItem.addEventListener("click", async (e) => {
+      clearParentItem.addEventListener("click", (e) => {
+        void (async () => {
         e.stopPropagation();
         menu.remove();
         const file = this.app.vault.getAbstractFileByPath(filePath);
         if (file instanceof TFile && (await this.plugin.setParent(file, null))) {
           new Notice(t("notice.parentCleared", { name: fileName }));
-          this.refresh();
+          void this.refresh();
         }
+        })();
       });
     }
 
@@ -1213,7 +1245,9 @@ class KanbanView extends ItemView {
       new CardCreateModal(
         this.app,
         this.plugin,
-        () => this.refresh(),
+        () => {
+          void this.refresh();
+        },
         this.fileMap,
         undefined,
         parentFile
@@ -1225,7 +1259,7 @@ class KanbanView extends ItemView {
     deleteItem.setText(t("menu.delete"));
     deleteItem.addEventListener("click", () => {
       menu.remove();
-      this.handleDeleteCard(filePath, fileName);
+      void this.handleDeleteCard(filePath, fileName);
     });
 
     // Close menu when clicking elsewhere
@@ -1235,7 +1269,7 @@ class KanbanView extends ItemView {
         document.removeEventListener("click", closeHandler, true);
       }
     };
-    setTimeout(() => document.addEventListener("click", closeHandler, true), 0);
+    window.setTimeout(() => document.addEventListener("click", closeHandler, true), 0);
   }
 
   private async copyToClipboard(text: string, label: string): Promise<void> {
@@ -1265,7 +1299,7 @@ class KanbanView extends ItemView {
     const file = this.app.vault.getAbstractFileByPath(filePath);
     if (!(file instanceof TFile)) return;
     await this.plugin.detachOnDelete(file);
-    await this.app.vault.trash(file, true);
+    await this.app.fileManager.trashFile(file);
     new Notice(t("notice.deleted", { name: fileName }));
   }
 
@@ -1295,11 +1329,13 @@ class KanbanView extends ItemView {
       return;
     }
 
-    new ParentSelectModal(this.app, candidates, async (parent) => {
-      if (await this.plugin.setParent(child, parent)) {
-        new Notice(t("notice.parentSet", { child: child.basename, parent: parent.basename }));
-        this.refresh();
-      }
+    new ParentSelectModal(this.app, candidates, (parent) => {
+      void (async () => {
+        if (await this.plugin.setParent(child, parent)) {
+          new Notice(t("notice.parentSet", { child: child.basename, parent: parent.basename }));
+          void this.refresh();
+        }
+      })();
     }).open();
   }
 }
@@ -1419,13 +1455,15 @@ class DeleteConfirmModal extends Modal {
       text: t("modal.delete"),
       cls: "nk-delete-confirm-btn",
     });
-    deleteBtn.addEventListener("click", async () => {
+    deleteBtn.addEventListener("click", () => {
+      void (async () => {
       if (skipNext) {
         this.plugin.settings.skipDeleteConfirm = true;
         await this.plugin.saveSettings();
       }
       this.close();
       await this.onConfirm();
+      })();
     });
   }
 
@@ -1487,7 +1525,7 @@ class CardCreateModal extends Modal {
       text.setPlaceholder(t("modal.titlePlaceholder")).onChange((v) => {
         this.titleInput = v;
       });
-      setTimeout(() => text.inputEl.focus(), 50);
+      window.setTimeout(() => text.inputEl.focus(), 50);
     });
 
     // Input fields are driven by the configured card display properties
@@ -1602,7 +1640,8 @@ class CardCreateModal extends Modal {
     }
 
     const now = new Date();
-    const dateStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
+    const pad2 = (n: number) => (n < 10 ? `0${n}` : `${n}`);
+    const dateStr = `${now.getFullYear()}-${pad2(now.getMonth() + 1)}-${pad2(now.getDate())}`;
 
     // Build frontmatter from the form fields. Fields left blank are still
     // written (as empty properties) so the card carries the configured
@@ -1627,7 +1666,7 @@ class CardCreateModal extends Modal {
     }
     new Notice(t("notice.created", { title }));
     this.close();
-    setTimeout(() => this.onDone(), 200);
+    window.setTimeout(() => this.onDone(), 200);
   }
 
   onClose() {
