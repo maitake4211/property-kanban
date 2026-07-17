@@ -7,8 +7,6 @@ on:
 
 permissions:
   contents: write
-  id-token: write
-  attestations: write
 
 jobs:
   build:
@@ -37,20 +35,19 @@ jobs:
 
       # Stamp styles.css with the release version so every release asset is
       # byte-unique. Identical bytes across releases share a sha256 digest and
-      # therefore inherit attestations from prior releases.
+      # would otherwise inherit attestations from prior releases.
+      #
+      # NOTE: artifact attestation is intentionally disabled for now. The
+      # community plugin submission checker rejects attestations that
+      # `gh attestation verify` accepts (as of 2026-07), and a missing
+      # attestation is only a non-blocking recommendation. Re-add
+      # actions/attest-build-provenance (with id-token/attestations write
+      # permissions) once the checker verifies them correctly.
       - name: Stamp styles.css with version
         run: |
           tag="${GITHUB_REF#refs/tags/}"
           printf '/* Property Kanban v%s */\n' "$tag" | cat - styles.css > styles.css.tmp
           mv styles.css.tmp styles.css
-
-      - name: Attest build provenance
-        uses: actions/attest-build-provenance@v4
-        with:
-          subject-path: |
-            main.js
-            manifest.json
-            styles.css
 
       - name: Create release
         env:

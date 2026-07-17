@@ -1,6 +1,6 @@
 {
   "name": "property-kanban",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Kanban board for Obsidian driven by note frontmatter properties",
   "main": "main.js",
   "license": "MIT",
