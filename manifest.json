@@ -1,8 +1,8 @@
 {
   "id": "property-kanban",
   "name": "Property Kanban",
-  "version": "1.0.0",
-  "minAppVersion": "1.4.10",
+  "version": "1.0.1",
+  "minAppVersion": "1.8.0",
   "description": "Kanban board driven by note frontmatter properties. Creating, moving, and deleting cards stays in sync with note properties, with swimlanes, quick actions, and parent/child links.",
   "author": "maitake4211",
   "authorUrl": "https://github.com/maitake4211",

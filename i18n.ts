@@ -3,6 +3,8 @@
 // Obsidian interface language is set to 日本語.
 // ============================================================
 
+import { getLanguage } from "obsidian";
+
 const en = {
   // Ribbon / commands
   "ribbon.open": "Open property kanban",
@@ -223,10 +225,9 @@ export type TranslationKey = keyof typeof en;
 
 const LOCALES: Record<string, typeof en> = { en, ja };
 
-/** Obsidian stores the interface language in localStorage ("language"). */
+/** Resolve the dictionary for the current Obsidian interface language. */
 function currentLocale(): typeof en {
-  const lang = window.localStorage.getItem("language") ?? "en";
-  return LOCALES[lang] ?? en;
+  return LOCALES[getLanguage()] ?? en;
 }
 
 /** Translate a key, substituting `{name}` placeholders from vars. */
