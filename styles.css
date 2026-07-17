@@ -1,0 +1,893 @@
+/* ============================================================
+   Notion Kanban - Styles
+   ============================================================ */
+
+/* Container */
+.nk-container {
+  --nk-border: color-mix(in srgb, var(--background-modifier-border) 70%, var(--text-normal));
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  overflow: hidden;
+}
+
+/* Header */
+.nk-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 20px;
+  border-bottom: 1px solid var(--nk-border);
+  flex-shrink: 0;
+}
+
+.nk-header h2 {
+  margin: 0;
+  font-size: 1.2em;
+  font-weight: 600;
+}
+
+.nk-header-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.nk-add-btn {
+  cursor: pointer;
+  padding: 6px 16px;
+  border-radius: 6px;
+  border: none;
+  background: var(--interactive-accent);
+  color: var(--text-on-accent);
+  font-size: 0.85em;
+  font-weight: 500;
+  transition: opacity 0.15s;
+}
+
+.nk-add-btn:hover {
+  opacity: 0.85;
+}
+
+/* Group-by selector */
+.nk-group-select {
+  padding: 4px 8px;
+  border-radius: 6px;
+  border: 1px solid var(--nk-border);
+  background: var(--background-secondary);
+  color: var(--text-normal);
+  font-size: 0.82em;
+  cursor: pointer;
+}
+
+
+/* Zoom controls */
+.nk-zoom-group {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  border: 1px solid var(--nk-border);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.nk-zoom-btn {
+  cursor: pointer;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: var(--background-secondary);
+  color: var(--text-muted);
+  font-size: 1em;
+  line-height: 1;
+  transition: background 0.12s, color 0.12s;
+}
+
+.nk-zoom-btn:hover {
+  background: var(--background-modifier-hover);
+  color: var(--text-normal);
+}
+
+.nk-zoom-label {
+  font-size: 0.75em;
+  color: var(--text-muted);
+  min-width: 36px;
+  text-align: center;
+  user-select: none;
+}
+
+/* Column order (rendered inside settings popover) */
+.nk-order-title {
+  font-size: 0.82em;
+  font-weight: 600;
+  color: var(--text-normal);
+}
+
+.nk-order-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  max-height: 168px;
+  overflow-y: auto;
+}
+
+.nk-order-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  background: var(--background-primary);
+  border: 1px solid var(--nk-border);
+}
+
+.nk-order-checkbox {
+  margin: 0;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.nk-order-name {
+  font-size: 0.82em;
+  color: var(--text-normal);
+  flex: 1;
+}
+
+.nk-order-row-hidden .nk-order-name {
+  color: var(--text-muted);
+  text-decoration: line-through;
+}
+
+.nk-order-drag-handle {
+  cursor: grab;
+  color: var(--text-faint);
+  font-size: 0.9em;
+  user-select: none;
+  flex-shrink: 0;
+}
+
+.nk-order-drag-handle:hover {
+  color: var(--text-muted);
+}
+
+.nk-order-row-dragging {
+  opacity: 0.4;
+}
+
+.nk-order-row-dragover {
+  border-color: var(--interactive-accent);
+  background: var(--background-modifier-hover);
+}
+
+.nk-order-section {
+  margin-bottom: 8px;
+}
+
+.nk-order-section:last-child {
+  margin-bottom: 0;
+}
+
+.nk-order-reset-btn {
+  cursor: pointer;
+  align-self: flex-start;
+  padding: 3px 10px;
+  border-radius: 4px;
+  border: 1px solid var(--nk-border);
+  background: none;
+  color: var(--text-muted);
+  font-size: 0.75em;
+  transition: color 0.12s, border-color 0.12s;
+}
+
+.nk-order-reset-btn:hover {
+  color: var(--text-normal);
+  border-color: var(--text-muted);
+}
+
+/* Visibility rows (rendered inside settings popover) */
+.nk-vis-row {
+  display: flex;
+  align-items: center;
+}
+
+.nk-vis-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.82em;
+  color: var(--text-normal);
+  cursor: pointer;
+  user-select: none;
+}
+
+.nk-vis-checkbox {
+  margin: 0;
+  cursor: pointer;
+}
+
+/* Board */
+.nk-board {
+  display: flex;
+  gap: 12px;
+  padding: 16px 20px;
+  overflow-x: auto;
+  flex: 1;
+  align-items: flex-start;
+}
+
+/* Column */
+.nk-column {
+  flex: 1 1 0;
+  min-width: 260px;
+  background: var(--background-secondary);
+  border-radius: 10px;
+  border: 1px solid var(--nk-border);
+  display: flex;
+  flex-direction: column;
+  max-height: 100%;
+}
+
+.nk-column-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px 8px;
+  flex-shrink: 0;
+}
+
+.nk-column-title {
+  font-weight: 600;
+  font-size: 0.9em;
+  color: var(--text-normal);
+}
+
+/* Collapsed column */
+.nk-column-collapsed {
+  flex: 0 0 80px;
+  min-width: 80px;
+  max-width: 80px;
+  cursor: pointer;
+  align-items: center;
+  padding-bottom: 12px;
+}
+
+.nk-column-header-collapsed {
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 6px;
+}
+
+.nk-column-title-collapsed {
+  writing-mode: vertical-rl;
+  font-weight: 600;
+  font-size: 0.82em;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.nk-column-collapsed.nk-drag-over {
+  background: var(--background-modifier-hover);
+}
+
+/* Clickable title for collapsing */
+.nk-column-title-clickable {
+  cursor: pointer;
+  transition: color 0.12s;
+}
+
+.nk-column-title-clickable:hover {
+  color: var(--interactive-accent);
+}
+
+.nk-column-count {
+  background: var(--nk-border);
+  color: var(--text-muted);
+  font-size: 0.75em;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-weight: 500;
+}
+
+/* Toolbar toggle button */
+.nk-toolbar-toggle {
+  cursor: pointer;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  border: 1px solid var(--nk-border);
+  background: var(--background-secondary);
+  color: var(--text-muted);
+  font-size: 1.1em;
+  transition: color 0.12s, border-color 0.12s;
+}
+
+.nk-toolbar-toggle:hover {
+  color: var(--text-normal);
+  border-color: var(--text-muted);
+}
+
+.nk-toolbar-toggle.is-active {
+  color: var(--interactive-accent);
+  border-color: var(--interactive-accent);
+  background: var(--background-modifier-hover);
+}
+
+.nk-toolbar-toggle .svg-icon {
+  width: 18px;
+  height: 18px;
+}
+
+/* Settings popover */
+.nk-settings-popover {
+  position: fixed;
+  z-index: var(--layer-popover, 30);
+  width: 320px;
+  max-width: calc(100vw - 16px);
+  max-height: calc(100vh - 120px);
+  overflow-y: auto;
+  background: var(--background-primary);
+  border: 1px solid var(--nk-border);
+  border-radius: 10px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18), 0 2px 6px rgba(0, 0, 0, 0.08);
+  padding: 2px 0;
+  font-size: 0.85em;
+}
+
+.nk-popover-section {
+  padding: 6px 14px;
+  border-bottom: 1px solid var(--background-modifier-border);
+}
+
+.nk-popover-section:last-of-type {
+  border-bottom: none;
+}
+
+.nk-popover-section-title {
+  font-size: 0.72em;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 5px;
+}
+
+.nk-popover-section-body {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.nk-popover-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.nk-popover-row-label {
+  font-size: 0.85em;
+  color: var(--text-normal);
+  flex-shrink: 0;
+  width: 56px;
+}
+
+.nk-popover-row .nk-group-select {
+  flex: 1;
+}
+
+.nk-popover-empty {
+  font-size: 0.78em;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.nk-popover-footer {
+  padding: 6px 14px 4px;
+}
+
+.nk-popover-link {
+  cursor: pointer;
+  background: none;
+  border: none;
+  color: var(--text-accent);
+  font-size: 0.82em;
+  padding: 4px 0;
+  text-align: left;
+  width: 100%;
+}
+
+.nk-popover-link:hover {
+  text-decoration: underline;
+}
+
+.nk-group-label {
+  font-size: 0.75em;
+  color: var(--text-muted);
+  white-space: nowrap;
+  font-weight: 500;
+}
+
+/* Swim lane layout */
+.nk-board-lanes {
+  flex-direction: column;
+  gap: 16px;
+  align-items: stretch;
+}
+
+.nk-lane {
+  background: var(--background-secondary);
+  border-radius: 10px;
+  border: 1px solid var(--nk-border);
+  overflow: visible;
+}
+
+.nk-lane-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--nk-border);
+}
+
+.nk-lane-title {
+  font-weight: 600;
+  font-size: 0.95em;
+  color: var(--text-normal);
+  cursor: pointer;
+  transition: color 0.12s;
+}
+
+.nk-lane-title:hover {
+  color: var(--interactive-accent);
+}
+
+.nk-lane-count {
+  font-size: 0.75em;
+  color: var(--text-muted);
+  background: var(--nk-border);
+  padding: 2px 8px;
+  border-radius: 10px;
+}
+
+.nk-lane-body {
+  display: flex;
+  gap: 8px;
+  padding: 10px 12px 14px;
+  overflow-x: auto;
+  height: 500px;
+}
+
+.nk-lane-body .nk-column {
+  flex: 1 1 0;
+  min-width: 240px;
+  background: var(--background-primary);
+  border: 1px solid var(--nk-border);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.nk-lane-body .nk-card-list {
+  overflow-y: auto;
+  flex: 1;
+  min-height: 0;
+}
+
+/* Lane resize handle */
+.nk-lane-resize-handle {
+  height: 10px;
+  cursor: row-resize;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0 0 10px 10px;
+}
+
+.nk-lane-resize-handle::after {
+  content: "";
+  width: 40px;
+  height: 3px;
+  border-radius: 3px;
+  background: var(--nk-border);
+  transition: background 0.12s;
+}
+
+.nk-lane-resize-handle:hover::after {
+  background: var(--interactive-accent);
+}
+
+body.nk-resizing-row {
+  cursor: row-resize !important;
+  user-select: none !important;
+}
+
+/* Collapsed lane */
+.nk-lane-collapsed {
+  cursor: pointer;
+}
+
+.nk-lane-collapsed .nk-lane-header {
+  border-bottom: none;
+}
+
+.nk-lane-collapsed .nk-lane-title {
+  color: var(--text-muted);
+}
+
+.nk-lane-collapsed.nk-drag-over {
+  background: var(--background-modifier-hover);
+}
+
+/* Card list (scrollable) */
+.nk-card-list {
+  padding: 4px 10px 10px;
+  overflow-y: auto;
+  flex: 1;
+  min-height: 60px;
+  transition: background 0.15s;
+  border-radius: 0 0 10px 10px;
+}
+
+.nk-card-list.nk-drag-over {
+  background: var(--background-modifier-hover);
+}
+
+/* Card */
+.nk-card {
+  background: var(--background-primary);
+  border: 1px solid var(--nk-border);
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin-bottom: 8px;
+  cursor: grab;
+  transition: box-shadow 0.15s, opacity 0.15s;
+}
+
+.nk-card:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.nk-card.nk-dragging {
+  opacity: 0.4;
+}
+
+.nk-card-title {
+  font-size: 0.85em;
+  font-weight: 500;
+  color: var(--text-normal);
+  cursor: pointer;
+  line-height: 1.4;
+  word-break: break-word;
+}
+
+.nk-card-title:hover {
+  color: var(--interactive-accent);
+  text-decoration: underline;
+}
+
+/* Tags */
+.nk-card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  margin-top: 8px;
+}
+
+/* Quick action button (set a frontmatter field to a fixed value) */
+.nk-card-quick-action {
+  margin-left: auto;
+  font-size: 0.7em;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+  background: var(--interactive-normal);
+  color: var(--text-normal);
+  border: 1px solid var(--background-modifier-border);
+  line-height: 1.4;
+}
+
+.nk-card-quick-action:hover {
+  background: var(--interactive-hover);
+}
+
+.nk-tag {
+  font-size: 0.7em;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+/* Tag colors */
+.nk-tag-blue { background: hsla(210, 60%, 55%, 0.15); color: hsl(210, 60%, 45%); }
+.nk-tag-green { background: hsla(150, 50%, 45%, 0.15); color: hsl(150, 50%, 35%); }
+.nk-tag-red { background: hsla(0, 60%, 55%, 0.15); color: hsl(0, 60%, 45%); }
+.nk-tag-yellow { background: hsla(40, 60%, 50%, 0.15); color: hsl(40, 60%, 38%); }
+.nk-tag-purple { background: hsla(270, 50%, 55%, 0.15); color: hsl(270, 50%, 42%); }
+.nk-tag-gray { background: hsla(0, 0%, 50%, 0.12); color: hsl(0, 0%, 40%); }
+
+/* Dark theme */
+.theme-dark .nk-tag-blue { background: hsla(210, 60%, 55%, 0.2); color: hsl(210, 60%, 65%); }
+.theme-dark .nk-tag-green { background: hsla(150, 50%, 45%, 0.2); color: hsl(150, 50%, 60%); }
+.theme-dark .nk-tag-red { background: hsla(0, 60%, 55%, 0.2); color: hsl(0, 60%, 65%); }
+.theme-dark .nk-tag-yellow { background: hsla(40, 60%, 50%, 0.2); color: hsl(40, 60%, 65%); }
+.theme-dark .nk-tag-purple { background: hsla(270, 50%, 55%, 0.2); color: hsl(270, 50%, 70%); }
+.theme-dark .nk-tag-gray { background: hsla(0, 0%, 50%, 0.15); color: hsl(0, 0%, 65%); }
+
+/* Add card in column */
+.nk-add-in-column {
+  padding: 8px 12px;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 0.8em;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: background 0.15s, color 0.15s;
+  margin-top: 4px;
+}
+
+.nk-add-in-column:hover {
+  background: var(--background-modifier-hover);
+  color: var(--text-normal);
+}
+
+/* Card header row */
+.nk-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 4px;
+}
+
+.nk-card-header .nk-card-title {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Three-dot menu button */
+.nk-card-menu-btn {
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  cursor: pointer;
+  color: var(--text-muted);
+  font-size: 1em;
+  line-height: 1;
+  opacity: 0;
+  transition: opacity 0.12s, background 0.12s, color 0.12s;
+  user-select: none;
+}
+
+.nk-card:hover .nk-card-menu-btn {
+  opacity: 1;
+}
+
+.nk-card-menu-btn:hover {
+  background: var(--background-modifier-hover);
+  color: var(--text-normal);
+}
+
+/* Dropdown menu */
+.nk-card-menu {
+  position: fixed;
+  z-index: 1000;
+  min-width: 120px;
+  background: var(--background-primary);
+  border: 1px solid var(--nk-border);
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  padding: 4px;
+  transform: translateX(-100%);
+}
+
+.nk-card-menu-item {
+  padding: 6px 12px;
+  font-size: 0.85em;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.1s;
+}
+
+.nk-card-menu-item:hover {
+  background: var(--background-modifier-hover);
+}
+
+.nk-card-menu-item-danger {
+  color: hsl(0, 65%, 55%);
+}
+
+.nk-card-menu-item-danger:hover {
+  background: hsla(0, 65%, 55%, 0.12);
+}
+
+.nk-card-menu-item-has-sub {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.nk-card-menu-item-arrow {
+  font-size: 0.75em;
+  color: var(--text-muted);
+}
+
+.nk-card-submenu {
+  position: absolute;
+  top: -5px;
+  left: 100%;
+  min-width: 160px;
+  background: var(--background-primary);
+  border: 1px solid var(--nk-border);
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  padding: 4px;
+  display: none;
+}
+
+.nk-card-menu-item-has-sub:hover .nk-card-submenu,
+.nk-card-submenu:hover {
+  display: block;
+}
+
+/* Delete confirm modal */
+.nk-delete-msg {
+  color: var(--text-muted);
+  font-size: 0.9em;
+  margin: 0 0 16px 0;
+}
+
+.nk-delete-check-row {
+  margin-bottom: 16px;
+}
+
+.nk-delete-check-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85em;
+  color: var(--text-muted);
+  cursor: pointer;
+  user-select: none;
+}
+
+.nk-delete-checkbox {
+  margin: 0;
+  cursor: pointer;
+}
+
+.nk-delete-btn-row {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.nk-delete-btn-row button {
+  padding: 6px 16px;
+  border-radius: 6px;
+  border: 1px solid var(--nk-border);
+  background: var(--background-secondary);
+  color: var(--text-normal);
+  font-size: 0.85em;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.nk-delete-btn-row button:hover {
+  opacity: 0.85;
+}
+
+.nk-delete-confirm-btn {
+  background: hsl(0, 65%, 55%) !important;
+  color: white !important;
+  border-color: hsl(0, 65%, 55%) !important;
+}
+
+/* Settings: Group definition cards */
+.nk-group-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.nk-group-card {
+  border: 1px solid var(--nk-border);
+  border-radius: 8px;
+  padding: 12px 16px;
+  background: var(--background-secondary);
+}
+
+.nk-group-card .setting-item {
+  border-top: none;
+  padding-top: 8px;
+  padding-bottom: 4px;
+}
+
+.nk-group-card .setting-item:last-child {
+  padding-bottom: 0;
+}
+
+.nk-group-card textarea {
+  width: 100%;
+}
+
+.nk-group-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.nk-group-card-num {
+  font-size: 0.75em;
+  font-weight: 600;
+  color: var(--text-muted);
+  background: var(--nk-border);
+  width: 22px;
+  height: 22px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+
+.nk-group-card-delete {
+  cursor: pointer;
+  padding: 2px 10px;
+  border-radius: 4px;
+  border: none;
+  background: none;
+  color: hsl(0, 65%, 55%);
+  font-size: 0.78em;
+  transition: background 0.12s;
+}
+
+.nk-group-card-delete:hover {
+  background: hsla(0, 65%, 55%, 0.1);
+}
+
+.nk-group-add {
+  margin-bottom: 16px;
+}
+
+.nk-group-add-btn {
+  cursor: pointer;
+  width: 100%;
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px dashed var(--nk-border);
+  background: none;
+  color: var(--text-muted);
+  font-size: 0.85em;
+  transition: color 0.12s, border-color 0.12s;
+}
+
+.nk-group-add-btn:hover {
+  color: var(--text-normal);
+  border-color: var(--text-muted);
+}
+
+/* Modal */
+.nk-modal {
+  padding: 8px;
+}
+
+.nk-modal h3 {
+  margin: 0 0 16px 0;
+}
