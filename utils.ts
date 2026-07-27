@@ -247,6 +247,39 @@ export function isColumnHidden(
   return (hiddenColumns[field] ?? []).includes(col);
 }
 
+export type SortOrder = "asc" | "desc";
+
+/**
+ * Sort cards by a frontmatter field. Returns a new array.
+ * - Numeric values compare numerically; everything else compares as
+ *   strings with numeric collation (so "2" < "10" and dates sort naturally)
+ * - Cards missing the field always sort last, regardless of order
+ * - Ties fall back to the card name (ascending)
+ */
+export function sortCards<T extends { name: string; fm: Record<string, string> }>(
+  cards: T[],
+  field: string,
+  order: SortOrder
+): T[] {
+  if (!field) return cards;
+  const dir = order === "desc" ? -1 : 1;
+  return [...cards].sort((a, b) => {
+    const av = a.fm[field] ?? "";
+    const bv = b.fm[field] ?? "";
+    if (!av && !bv) return a.name.localeCompare(b.name);
+    if (!av) return 1;
+    if (!bv) return -1;
+    const an = Number(av);
+    const bn = Number(bv);
+    const cmp =
+      !Number.isNaN(an) && !Number.isNaN(bn)
+        ? an - bn
+        : av.localeCompare(bv, undefined, { numeric: true });
+    if (cmp !== 0) return cmp > 0 ? dir : -dir;
+    return a.name.localeCompare(b.name);
+  });
+}
+
 /**
  * Assign cards to a column based on their status frontmatter field.
  */

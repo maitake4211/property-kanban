@@ -8,6 +8,7 @@ import {
   removeFrontmatterField,
   buildFrontmatter,
   getCardsForColumn,
+  sortCards,
   collectAllFields,
   resolveAllColumns,
   isColumnHidden,
@@ -450,6 +451,66 @@ describe("getCardsForColumn", () => {
     expect(names).toContain("task1");
     expect(names).toContain("task4");
     expect(names).toContain("task5");
+  });
+});
+
+// ============================================================
+// sortCards
+// ============================================================
+
+describe("sortCards", () => {
+  const card = (name: string, fm: Record<string, string>) => ({
+    path: `task/${name}.md`,
+    name,
+    fm,
+  });
+
+  it("文字列プロパティで昇順に並ぶ", () => {
+    const cards = [card("b", { 期限: "2026-08-01" }), card("a", { 期限: "2026-07-01" })];
+    const sorted = sortCards(cards, "期限", "asc");
+    expect(sorted.map((c) => c.name)).toEqual(["a", "b"]);
+  });
+
+  it("降順に並ぶ", () => {
+    const cards = [card("a", { 期限: "2026-07-01" }), card("b", { 期限: "2026-08-01" })];
+    const sorted = sortCards(cards, "期限", "desc");
+    expect(sorted.map((c) => c.name)).toEqual(["b", "a"]);
+  });
+
+  it("数値は数値として比較される（\"2\" < \"10\"）", () => {
+    const cards = [card("a", { 優先度: "10" }), card("b", { 優先度: "2" })];
+    const sorted = sortCards(cards, "優先度", "asc");
+    expect(sorted.map((c) => c.name)).toEqual(["b", "a"]);
+  });
+
+  it("プロパティ未設定のカードは順序に関わらず末尾に来る", () => {
+    const cards = [card("none", {}), card("a", { 期限: "2026-07-01" })];
+    expect(sortCards(cards, "期限", "asc").map((c) => c.name)).toEqual(["a", "none"]);
+    expect(sortCards(cards, "期限", "desc").map((c) => c.name)).toEqual(["a", "none"]);
+  });
+
+  it("空文字は未設定と同じ扱いで末尾に来る", () => {
+    const cards = [card("empty", { 期限: "" }), card("a", { 期限: "2026-07-01" })];
+    expect(sortCards(cards, "期限", "asc").map((c) => c.name)).toEqual(["a", "empty"]);
+  });
+
+  it("同値のカードは名前の昇順で安定する", () => {
+    const cards = [card("b", { 期限: "2026-07-01" }), card("a", { 期限: "2026-07-01" })];
+    expect(sortCards(cards, "期限", "asc").map((c) => c.name)).toEqual(["a", "b"]);
+    expect(sortCards(cards, "期限", "desc").map((c) => c.name)).toEqual(["a", "b"]);
+  });
+
+  it("フィールドが空文字なら元の配列をそのまま返す", () => {
+    const cards = [card("b", { 期限: "2026-08-01" }), card("a", { 期限: "2026-07-01" })];
+    const sorted = sortCards(cards, "", "asc");
+    expect(sorted.map((c) => c.name)).toEqual(["b", "a"]);
+    expect(sorted).toBe(cards);
+  });
+
+  it("元の配列は破壊されない", () => {
+    const cards = [card("b", { 期限: "2026-08-01" }), card("a", { 期限: "2026-07-01" })];
+    sortCards(cards, "期限", "asc");
+    expect(cards.map((c) => c.name)).toEqual(["b", "a"]);
   });
 });
 

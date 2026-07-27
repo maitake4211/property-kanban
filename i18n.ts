@@ -21,6 +21,11 @@ const en = {
 
   // Settings popover
   "popover.group": "Grouping",
+  "popover.sort": "Sorting",
+  "popover.sortProperty": "Property",
+  "popover.sortOrder": "Order",
+  "popover.sortAsc": "Ascending",
+  "popover.sortDesc": "Descending",
   "popover.zoom": "Zoom",
   "popover.cardProperties": "Card properties",
   "popover.columnOrder": "Column order & visibility",
@@ -132,6 +137,11 @@ const ja: typeof en = {
   "board.addCard": "+ カード追加",
 
   "popover.group": "グループ",
+  "popover.sort": "並び替え",
+  "popover.sortProperty": "プロパティ",
+  "popover.sortOrder": "順序",
+  "popover.sortAsc": "昇順",
+  "popover.sortDesc": "降順",
   "popover.zoom": "ズーム",
   "popover.cardProperties": "カードに表示する項目",
   "popover.columnOrder": "列の並び替え・表示",

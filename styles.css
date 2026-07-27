@@ -297,8 +297,9 @@
 /* Toolbar toggle button */
 .nk-toolbar-toggle {
   cursor: pointer;
-  width: 32px;
-  height: 32px;
+  --icon-size: 20px;
+  width: 34px;
+  height: 34px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -321,9 +322,9 @@
   background: var(--background-modifier-hover);
 }
 
-.nk-toolbar-toggle .svg-icon {
-  width: 18px;
-  height: 18px;
+.nk-toolbar-toggle svg {
+  width: var(--icon-size);
+  height: var(--icon-size);
 }
 
 /* Settings popover */

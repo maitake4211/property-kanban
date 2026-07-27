@@ -28,6 +28,8 @@ import {
   setListField,
   removeFrontmatterField,
   getCardsForColumn,
+  sortCards,
+  SortOrder,
   collectAllFields,
   resolveAllColumns as resolveAllColumnsFn,
   isColumnHidden as isColumnHiddenFn,
@@ -67,6 +69,8 @@ interface PropertyKanbanSettings {
   boardZoom: number;
   activeGroupField: string;
   activeSubGroupField: string;
+  sortField: string;
+  sortOrder: SortOrder;
   columnOrders: Record<string, string[]>;
   hiddenColumns: Record<string, string[]>;
   laneHeights: Record<string, number>;
@@ -95,6 +99,8 @@ const DEFAULT_SETTINGS: PropertyKanbanSettings = {
   boardZoom: 100,
   activeGroupField: "status",
   activeSubGroupField: "",
+  sortField: "",
+  sortOrder: "asc",
   columnOrders: {},
   hiddenColumns: {},
   laneHeights: {},
@@ -675,6 +681,9 @@ class KanbanView extends ItemView {
     const groupSection = this.createPopoverSection(popover, t("popover.group"));
     this.renderGroupSelectors(groupSection, popover, container);
 
+    const sortSection = this.createPopoverSection(popover, t("popover.sort"));
+    this.renderSortSelectors(sortSection, container);
+
     const zoomSection = this.createPopoverSection(popover, t("popover.zoom"));
     this.renderZoomControls(zoomSection, container);
 
@@ -704,6 +713,44 @@ class KanbanView extends ItemView {
     const section = popover.createDiv({ cls: "nk-popover-section" });
     section.createDiv({ cls: "nk-popover-section-title", text: title });
     return section.createDiv({ cls: "nk-popover-section-body" });
+  }
+
+  /** Sort condition: one frontmatter property + ascending/descending */
+  private renderSortSelectors(parent: HTMLElement, container: HTMLElement): void {
+    const allFields = this.collectFields();
+
+    const fieldRow = parent.createDiv({ cls: "nk-popover-row" });
+    fieldRow.createSpan({ cls: "nk-popover-row-label", text: t("popover.sortProperty") });
+    const fieldSelect = fieldRow.createEl("select", { cls: "nk-group-select" });
+    fieldSelect.createEl("option", { text: t("popover.none") }).value = "";
+    for (const field of allFields) {
+      fieldSelect.createEl("option", { text: field }).value = field;
+    }
+    fieldSelect.value = this.plugin.settings.sortField;
+
+    const orderRow = parent.createDiv({ cls: "nk-popover-row" });
+    orderRow.createSpan({ cls: "nk-popover-row-label", text: t("popover.sortOrder") });
+    const orderSelect = orderRow.createEl("select", { cls: "nk-group-select" });
+    orderSelect.createEl("option", { text: t("popover.sortAsc") }).value = "asc";
+    orderSelect.createEl("option", { text: t("popover.sortDesc") }).value = "desc";
+    orderSelect.value = this.plugin.settings.sortOrder;
+    orderSelect.disabled = !this.plugin.settings.sortField;
+
+    fieldSelect.addEventListener("change", () => {
+      void (async () => {
+        this.plugin.settings.sortField = fieldSelect.value;
+        orderSelect.disabled = !fieldSelect.value;
+        await this.plugin.saveSettings();
+        this.rerenderBoard(container);
+      })();
+    });
+    orderSelect.addEventListener("change", () => {
+      void (async () => {
+        this.plugin.settings.sortOrder = orderSelect.value as SortOrder;
+        await this.plugin.saveSettings();
+        this.rerenderBoard(container);
+      })();
+    });
   }
 
   private renderGroupSelectors(
@@ -971,11 +1018,16 @@ class KanbanView extends ItemView {
     field: string,
     firstColumn: string
   ): { path: string; name: string; fm: Record<string, string> }[] {
-    return getCardsForColumn(
+    const cards = getCardsForColumn(
       this.fileMap,
       colName,
       field,
       firstColumn
+    );
+    return sortCards(
+      cards,
+      this.plugin.settings.sortField,
+      this.plugin.settings.sortOrder
     );
   }
 
