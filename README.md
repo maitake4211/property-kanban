@@ -1,6 +1,6 @@
 # Property Kanban
 
-[日本語版 README はこちら](README.ja.md)
+[日本語版 README はこちら](https://github.com/maitake4211/property-kanban/blob/main/README.ja.md)
 
 A kanban task board for [Obsidian](https://obsidian.md) driven entirely by note frontmatter properties.
 Task notes are the single source of truth: creating, moving, and deleting cards on the board updates the note properties instantly — and editing notes updates the board.
