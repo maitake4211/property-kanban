@@ -322,10 +322,10 @@
   background: var(--background-modifier-hover);
 }
 
-/* Maximize the gear icon within the button (button size minus padding) */
+/* Gear icon at 80% of the button's inner area */
 .nk-toolbar-toggle svg {
-  width: 100%;
-  height: 100%;
+  width: 80%;
+  height: 80%;
 }
 
 /* Settings popover */
