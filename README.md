@@ -10,6 +10,7 @@ Task notes are the single source of truth: creating, moving, and deleting cards 
 ### Kanban board
 
 - Cards are grouped automatically by any frontmatter field
+- Cards within columns can be sorted automatically by any frontmatter property, ascending or descending
 - Drag & drop cards between columns → frontmatter updates automatically
 - Click a card title to open the note (if the note is already open in another tab, jumps to that tab instead of opening a duplicate)
 - File changes, creations, and deletions are detected in real time and the board refreshes automatically
@@ -74,6 +75,7 @@ Click the gear icon in the header to open the board options popover:
 | Option | Description |
 |--------|-------------|
 | Lane / Column | Switch the frontmatter fields used for grouping |
+| Sorting | Sort cards within columns by one frontmatter property, ascending or descending. Numbers compare numerically, cards missing the property go last; "None" keeps the natural order |
 | Zoom | Zoom the board in/out (50%–200%) |
 | Card properties | Toggle which properties are shown on cards |
 | Column order | Reorder lanes/columns (drag & drop) and toggle their visibility |
@@ -82,8 +84,8 @@ Click the gear icon in the header to open the board options popover:
 
 Configure which frontmatter fields are shown as tags on cards.
 
-- Add or remove any field
-- Pick a color per field (blue, green, red, yellow, purple, gray)
+- Add or remove any field — pick one from the fields found in your task folder notes, or type a field name manually
+- Pick a color per field (blue, green, red, yellow, purple, gray, orange, pink, teal)
 - Toggle from the settings or the board options popover
 
 ## Installation
@@ -131,7 +133,7 @@ The plugin UI is in English by default and switches to Japanese when the Obsidia
 - Frontmatter is read and written by parsing file content directly (no dependency on the metadata cache)
 - Grouping fields and column values are auto-detected from task note frontmatter
 - Board refreshes are debounced (150 ms) to coalesce rapid file events
-- Card deletion uses `vault.trash()` — notes are moved to the trash, never permanently deleted
+- Card deletion uses `fileManager.trashFile()` — notes are moved to the trash, never permanently deleted
 - No data ever leaves your vault; the plugin makes no network requests
 
 ## Development
