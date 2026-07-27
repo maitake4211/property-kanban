@@ -633,9 +633,13 @@ class KanbanView extends ItemView {
 
     const positionPopover = () => {
       const rect = triggerBtn.getBoundingClientRect();
-      popover.style.top = `${rect.bottom + 6}px`;
+      const top = rect.bottom + 6;
+      popover.style.top = `${top}px`;
       const right = Math.max(8, window.innerWidth - rect.right);
       popover.style.right = `${right}px`;
+      // Clamp to the space below the trigger so the popover never runs
+      // off-screen; content beyond this scrolls (overflow-y in CSS)
+      popover.style.maxHeight = `${Math.max(160, window.innerHeight - top - 12)}px`;
     };
     positionPopover();
 
