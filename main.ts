@@ -1,6 +1,7 @@
 import {
   AbstractInputSuggest,
   App,
+  DropdownComponent,
   FileSystemAdapter,
   FuzzySuggestModal,
   ItemView,
@@ -36,7 +37,16 @@ import {
 // Types
 // ============================================================
 
-type TagColor = "blue" | "green" | "red" | "yellow" | "purple" | "gray";
+type TagColor =
+  | "blue"
+  | "green"
+  | "red"
+  | "yellow"
+  | "purple"
+  | "gray"
+  | "orange"
+  | "pink"
+  | "teal";
 
 interface DisplayProperty {
   field: string;
@@ -1808,7 +1818,19 @@ class PropertyKanbanSettingTab extends PluginSettingTab {
       .setDesc(t("settings.displayPropsDesc"))
       .setHeading();
 
-    const TAG_COLORS: TagColor[] = ["blue", "green", "red", "yellow", "purple", "gray"];
+    const TAG_COLORS: TagColor[] = [
+      "blue",
+      "green",
+      "red",
+      "yellow",
+      "purple",
+      "gray",
+      "orange",
+      "pink",
+      "teal",
+    ];
+
+    let refreshFolderFields: () => void = () => {};
 
     const propsContainer = containerEl.createDiv();
     const renderProps = () => {
@@ -1840,6 +1862,7 @@ class PropertyKanbanSettingTab extends PluginSettingTab {
               this.plugin.settings.cardDisplayProperties.splice(i, 1);
               await this.plugin.saveSettings();
               renderProps();
+              refreshFolderFields();
             })
           );
       }
@@ -1847,7 +1870,55 @@ class PropertyKanbanSettingTab extends PluginSettingTab {
 
     renderProps();
 
-    // Add new display property
+    const addDisplayProperty = async (field: string) => {
+      this.plugin.settings.cardDisplayProperties.push({
+        field,
+        label: field,
+        enabled: true,
+        color: "gray",
+        prefix: "",
+        hideInvalid: false,
+      });
+      await this.plugin.saveSettings();
+      renderProps();
+      refreshFolderFields();
+    };
+
+    // Add a display property picked from fields found in task folder notes
+    let folderFieldSelect: DropdownComponent | null = null;
+    refreshFolderFields = () => {
+      void this.collectTaskFolderFields().then((fields) => {
+        if (!folderFieldSelect) return;
+        const added = new Set(
+          this.plugin.settings.cardDisplayProperties.map((dp) => dp.field)
+        );
+        const candidates = fields.filter((f) => !added.has(f));
+        folderFieldSelect.selectEl.empty();
+        if (candidates.length === 0) {
+          folderFieldSelect.addOption("", t("settings.noNewFields"));
+        } else {
+          for (const f of candidates) folderFieldSelect.addOption(f, f);
+        }
+        folderFieldSelect.setDisabled(candidates.length === 0);
+      });
+    };
+
+    new Setting(containerEl)
+      .setName(t("settings.addFromFolder"))
+      .setDesc(t("settings.addFromFolderDesc"))
+      .addDropdown((dd) => {
+        folderFieldSelect = dd;
+        refreshFolderFields();
+      })
+      .addButton((btn) =>
+        btn.setButtonText(t("settings.add")).onClick(async () => {
+          const val = folderFieldSelect?.getValue();
+          if (!val) return;
+          await addDisplayProperty(val);
+        })
+      );
+
+    // Add new display property by typing a field name
     let newFieldInput: TextComponent | null = null;
     new Setting(containerEl)
       .setName(t("settings.addProperty"))
@@ -1860,18 +1931,19 @@ class PropertyKanbanSettingTab extends PluginSettingTab {
         btn.setButtonText(t("settings.add")).onClick(async () => {
           const val = newFieldInput?.getValue().trim();
           if (!val) return;
-          this.plugin.settings.cardDisplayProperties.push({
-            field: val,
-            label: val,
-            enabled: true,
-            color: "gray",
-            prefix: "",
-            hideInvalid: false,
-          });
-          await this.plugin.saveSettings();
           newFieldInput?.setValue("");
-          renderProps();
+          await addDisplayProperty(val);
         })
       );
+  }
+
+  /** Frontmatter field names found across notes in the task folder. */
+  private async collectTaskFolderFields(): Promise<string[]> {
+    const fileMap = new Map<string, Record<string, string>>();
+    for (const file of this.plugin.taskFiles()) {
+      const content = await this.app.vault.read(file);
+      fileMap.set(file.path, parseFrontmatter(content));
+    }
+    return collectAllFields(fileMap);
   }
 }
