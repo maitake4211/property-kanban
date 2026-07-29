@@ -1,6 +1,7 @@
 // ============================================================
-// i18n — English is the default; Japanese is used when the
-// Obsidian interface language is set to 日本語.
+// i18n — English is the default; Japanese and Chinese
+// (Simplified / Traditional) are used when the Obsidian
+// interface language is set accordingly.
 // ============================================================
 
 import { getLanguage } from "obsidian";
@@ -298,9 +299,293 @@ const ja: typeof en = {
   "settings.add": "追加",
 };
 
+const zh: typeof en = {
+  "ribbon.open": "打开 Property Kanban",
+  "command.openBoard": "打开看板",
+  "command.rebuildHierarchy": "重建父子链接",
+
+  "view.title": "Property Kanban",
+
+  "board.newTask": "+ 新建任务",
+  "board.viewSettings": "看板设置",
+  "board.addCard": "+ 添加卡片",
+
+  "popover.group": "分组",
+  "popover.sort": "排序",
+  "popover.sortProperty": "属性",
+  "popover.sortOrder": "顺序",
+  "popover.sortAsc": "升序",
+  "popover.sortDesc": "降序",
+  "popover.zoom": "缩放",
+  "popover.cardProperties": "卡片显示属性",
+  "popover.columnOrder": "列排序与显示",
+  "popover.openPluginSettings": "打开插件设置…",
+  "popover.noFields": "没有可用的字段",
+  "popover.lane": "泳道",
+  "popover.column": "列",
+  "popover.none": "无",
+  "popover.noDisplayProps": "尚未配置显示属性",
+  "popover.laneSection": "泳道：{field}",
+  "popover.columnSection": "列：{field}",
+  "popover.reset": "重置",
+
+  "menu.copyPath": "复制路径",
+  "menu.vaultPath": "仓库路径",
+  "menu.obsidianLink": "Obsidian 链接",
+  "menu.obsidianUrl": "Obsidian URL",
+  "menu.systemPath": "系统路径",
+  "menu.setParent": "设置父任务…",
+  "menu.clearParent": "移除父任务",
+  "menu.addChild": "添加子任务…",
+  "menu.delete": "删除",
+
+  "modal.selectParentPlaceholder": "选择父任务",
+  "modal.deleteTitle": "删除任务",
+  "modal.deleteMessage": "确定删除「{name}」？笔记将被移至回收站。",
+  "modal.dontAskAgain": "不再询问",
+  "modal.cancel": "取消",
+  "modal.delete": "删除",
+  "modal.createTitle": "新建任务",
+  "modal.titleName": "标题",
+  "modal.titlePlaceholder": "输入任务名称",
+  "modal.valuePlaceholderExisting": "选择或输入新值",
+  "modal.valuePlaceholderNew": "输入 {field}",
+  "modal.parentNone": "无父任务",
+  "modal.parentCurrent": "父任务：{name}",
+  "modal.changeParent": "更改",
+  "modal.selectParent": "选择父任务",
+  "modal.clearParent": "清除",
+  "modal.create": "创建",
+
+  "notice.cannotParentSelf": "笔记不能作为自己的父任务",
+  "notice.cyclicParent": "不能创建循环的父子关系",
+  "notice.noFrontmatter": "无法设置父任务：笔记没有 frontmatter",
+  "notice.hierarchyRebuilt": "已重建父子链接（更新了 {count} 个笔记）",
+  "notice.cardMoved": "「{name}」→ {dest}",
+  "notice.quickAction": "「{name}」：{field} → {value}",
+  "notice.systemPathUnavailable": "当前环境无法获取系统路径",
+  "notice.parentCleared": "已移除「{name}」的父任务",
+  "notice.copied": "{label}已复制到剪贴板",
+  "notice.copyFailed": "复制到剪贴板失败",
+  "notice.deleted": "「{name}」已移至回收站",
+  "notice.noParentCandidates": "没有可选的父任务",
+  "notice.parentSet": "已将「{child}」的父任务设为「{parent}」",
+  "notice.titleRequired": "请输入标题",
+  "notice.duplicateTask": "已存在同名任务",
+  "notice.created": "已创建「{title}」",
+  "notice.samplesSeeded": "已在「{folder}」中创建示例任务，可随意编辑或删除。",
+
+  "sample.categoryValue": "教程",
+  "sample.projectA": "示例项目A",
+  "sample.projectB": "示例项目B",
+  "sample.title1": "1. 试着移动这张卡片",
+  "sample.body1":
+    "这是一张示例卡片。看板上的每张卡片都是 `{folder}` 文件夹中的普通 Markdown 笔记。\n\n" +
+    "- 把这张卡片拖到其他列，本笔记的 `{field}` 属性会立即更新\n" +
+    "- 点击看板上的卡片标题即可打开笔记\n" +
+    "- 卡片上的标签显示的是上方的 frontmatter 属性\n\n" +
+    "不再需要示例卡片时可以随时删除（卡片的 `⋯` 菜单 →「删除」）。",
+  "sample.title2": "2. 添加自己的任务",
+  "sample.body2":
+    "可以通过看板顶部的「+ 新建任务」或每列底部的「+ 添加卡片」创建新任务。\n\n" +
+    "- 创建表单会提示其他卡片已使用的值，也可以自由输入新值\n" +
+    "- 直接编辑本笔记的 frontmatter 也会立即反映到看板\n" +
+    "- 删除或移动笔记后，卡片也会从看板上消失",
+  "sample.title3": "3. 按自己的方式使用",
+  "sample.body3":
+    "看板可以适配你自己的属性名和属性值。\n\n" +
+    "- 列是根据笔记实际使用的值自动生成的。在笔记中修改 `{field}` 的值，列也会随之变化\n" +
+    "- 通过看板右上角的 ⚙ 可以切换分组属性（泳道/列）、排序、列的显示/隐藏和缩放\n" +
+    "- 在 设置 → Property Kanban →「卡片显示属性」中选择卡片上显示的属性及其颜色",
+  "sample.title4": "4. 泳道的工作方式",
+  "sample.body4":
+    "看板默认以泳道视图打开：每个 `project` 一行（示例项目A / 示例项目B），行内是 `{field}` 的列。\n\n" +
+    "- 跨泳道拖动卡片时，`project` 和 `{field}` 会同时更新\n" +
+    "- 任意两个 frontmatter 属性都可以组合，在 ⚙ →「分组」（泳道/列）中选择\n" +
+    "- 想要简单的一维看板时，把泳道设为 `{field}`、列设为「无」",
+
+  "settings.taskFolder": "任务文件夹",
+  "settings.taskFolderDesc": "存放任务笔记的文件夹路径。",
+  "settings.quickActionHeading": "快捷操作按钮",
+  "settings.quickActionDesc": "在卡片上显示一个按钮，一键将属性设置为预设值。",
+  "settings.quickActionShow": "显示按钮",
+  "settings.quickActionLabel": "按钮文字",
+  "settings.quickActionLabelDesc": "卡片上显示的文字（例如 Done）。",
+  "settings.quickActionField": "目标字段",
+  "settings.quickActionFieldDesc": "要更新的 frontmatter 字段。",
+  "settings.quickActionValue": "设置的值",
+  "settings.quickActionValueDesc": "点击按钮时写入字段的值。",
+  "settings.hierarchyHeading": "父子关系",
+  "settings.hierarchyDesc": "以 frontmatter wikilink 管理卡片之间的父子关系。子笔记的父链接是权威数据，父笔记的子列表自动生成，因此可以在 Obsidian 的关系图中追踪层级。",
+  "settings.parentField": "父字段名",
+  "settings.parentFieldDesc": "写入子笔记的父链接 frontmatter 字段名。",
+  "settings.childrenField": "子字段名",
+  "settings.childrenFieldDesc": "在父笔记上自动生成的子列表 frontmatter 字段名。",
+  "settings.maintainChildren": "自动维护子列表",
+  "settings.maintainChildrenDesc": "在父笔记上维护子任务的 wikilink 列表。关闭后仅写入单向的父链接。",
+  "settings.showEmptyParent": "为新卡片添加空的父字段",
+  "settings.showEmptyParentDesc": "即使创建卡片时未指定父任务，也写入空的父字段。",
+  "settings.rebuildHierarchy": "重建父子链接",
+  "settings.rebuildHierarchyDesc": "以父链接（权威数据）为准，重新生成所有子列表。",
+  "settings.rebuild": "重建",
+  "settings.displayPropsHeading": "卡片显示属性",
+  "settings.displayPropsDesc": "配置卡片上显示哪些 frontmatter 属性。",
+  "settings.fieldLabel": "字段：{field}",
+  "settings.deleteTooltip": "删除",
+  "settings.addFromFolder": "从任务文件夹添加",
+  "settings.addFromFolderDesc": "从任务文件夹的笔记中检测到的 frontmatter 字段中选择。",
+  "settings.noNewFields": "没有可添加的字段",
+  "settings.addProperty": "添加属性",
+  "settings.addPropertyDesc": "输入 frontmatter 字段名。",
+  "settings.addPropertyPlaceholder": "例如：assignee",
+  "settings.add": "添加",
+};
+
+const zhTW: typeof en = {
+  "ribbon.open": "開啟 Property Kanban",
+  "command.openBoard": "開啟看板",
+  "command.rebuildHierarchy": "重建父子連結",
+
+  "view.title": "Property Kanban",
+
+  "board.newTask": "+ 新增任務",
+  "board.viewSettings": "看板設定",
+  "board.addCard": "+ 新增卡片",
+
+  "popover.group": "分組",
+  "popover.sort": "排序",
+  "popover.sortProperty": "屬性",
+  "popover.sortOrder": "順序",
+  "popover.sortAsc": "遞增",
+  "popover.sortDesc": "遞減",
+  "popover.zoom": "縮放",
+  "popover.cardProperties": "卡片顯示屬性",
+  "popover.columnOrder": "欄位排序與顯示",
+  "popover.openPluginSettings": "開啟外掛程式設定…",
+  "popover.noFields": "沒有可用的欄位",
+  "popover.lane": "泳道",
+  "popover.column": "欄",
+  "popover.none": "無",
+  "popover.noDisplayProps": "尚未設定顯示屬性",
+  "popover.laneSection": "泳道：{field}",
+  "popover.columnSection": "欄：{field}",
+  "popover.reset": "重設",
+
+  "menu.copyPath": "複製路徑",
+  "menu.vaultPath": "儲存庫路徑",
+  "menu.obsidianLink": "Obsidian 連結",
+  "menu.obsidianUrl": "Obsidian URL",
+  "menu.systemPath": "系統路徑",
+  "menu.setParent": "設定父任務…",
+  "menu.clearParent": "移除父任務",
+  "menu.addChild": "新增子任務…",
+  "menu.delete": "刪除",
+
+  "modal.selectParentPlaceholder": "選擇父任務",
+  "modal.deleteTitle": "刪除任務",
+  "modal.deleteMessage": "確定刪除「{name}」？筆記將移至垃圾桶。",
+  "modal.dontAskAgain": "不再詢問",
+  "modal.cancel": "取消",
+  "modal.delete": "刪除",
+  "modal.createTitle": "建立新任務",
+  "modal.titleName": "標題",
+  "modal.titlePlaceholder": "輸入任務名稱",
+  "modal.valuePlaceholderExisting": "選擇或輸入新值",
+  "modal.valuePlaceholderNew": "輸入 {field}",
+  "modal.parentNone": "無父任務",
+  "modal.parentCurrent": "父任務：{name}",
+  "modal.changeParent": "變更",
+  "modal.selectParent": "選擇父任務",
+  "modal.clearParent": "清除",
+  "modal.create": "建立",
+
+  "notice.cannotParentSelf": "筆記不能作為自己的父任務",
+  "notice.cyclicParent": "不能建立循環的父子關係",
+  "notice.noFrontmatter": "無法設定父任務：筆記沒有 frontmatter",
+  "notice.hierarchyRebuilt": "已重建父子連結（更新了 {count} 個筆記）",
+  "notice.cardMoved": "「{name}」→ {dest}",
+  "notice.quickAction": "「{name}」：{field} → {value}",
+  "notice.systemPathUnavailable": "目前環境無法取得系統路徑",
+  "notice.parentCleared": "已移除「{name}」的父任務",
+  "notice.copied": "{label}已複製到剪貼簿",
+  "notice.copyFailed": "複製到剪貼簿失敗",
+  "notice.deleted": "「{name}」已移至垃圾桶",
+  "notice.noParentCandidates": "沒有可選的父任務",
+  "notice.parentSet": "已將「{child}」的父任務設為「{parent}」",
+  "notice.titleRequired": "請輸入標題",
+  "notice.duplicateTask": "已存在同名任務",
+  "notice.created": "已建立「{title}」",
+  "notice.samplesSeeded": "已在「{folder}」中建立範例任務，可隨意編輯或刪除。",
+
+  "sample.categoryValue": "教學",
+  "sample.projectA": "範例專案A",
+  "sample.projectB": "範例專案B",
+  "sample.title1": "1. 試著移動這張卡片",
+  "sample.body1":
+    "這是一張範例卡片。看板上的每張卡片都是 `{folder}` 資料夾中的普通 Markdown 筆記。\n\n" +
+    "- 把這張卡片拖曳到其他欄，本筆記的 `{field}` 屬性會立即更新\n" +
+    "- 點擊看板上的卡片標題即可開啟筆記\n" +
+    "- 卡片上的標籤顯示的是上方的 frontmatter 屬性\n\n" +
+    "不再需要範例卡片時可以隨時刪除（卡片的 `⋯` 選單 →「刪除」）。",
+  "sample.title2": "2. 新增自己的任務",
+  "sample.body2":
+    "可以透過看板頂部的「+ 新增任務」或每欄底部的「+ 新增卡片」建立新任務。\n\n" +
+    "- 建立表單會提示其他卡片已使用的值，也可以自由輸入新值\n" +
+    "- 直接編輯本筆記的 frontmatter 也會立即反映到看板\n" +
+    "- 刪除或移動筆記後，卡片也會從看板上消失",
+  "sample.title3": "3. 依自己的方式使用",
+  "sample.body3":
+    "看板可以配合你自己的屬性名稱和屬性值。\n\n" +
+    "- 欄是根據筆記實際使用的值自動產生的。在筆記中修改 `{field}` 的值，欄也會隨之變化\n" +
+    "- 透過看板右上角的 ⚙ 可以切換分組屬性（泳道/欄）、排序、欄的顯示/隱藏和縮放\n" +
+    "- 在 設定 → Property Kanban →「卡片顯示屬性」中選擇卡片上顯示的屬性及其顏色",
+  "sample.title4": "4. 泳道的運作方式",
+  "sample.body4":
+    "看板預設以泳道檢視開啟：每個 `project` 一列（範例專案A / 範例專案B），列內是 `{field}` 的欄。\n\n" +
+    "- 跨泳道拖曳卡片時，`project` 和 `{field}` 會同時更新\n" +
+    "- 任意兩個 frontmatter 屬性都可以組合，在 ⚙ →「分組」（泳道/欄）中選擇\n" +
+    "- 想要簡單的一維看板時，把泳道設為 `{field}`、欄設為「無」",
+
+  "settings.taskFolder": "任務資料夾",
+  "settings.taskFolderDesc": "存放任務筆記的資料夾路徑。",
+  "settings.quickActionHeading": "快速操作按鈕",
+  "settings.quickActionDesc": "在卡片上顯示一個按鈕，一鍵將屬性設為預設值。",
+  "settings.quickActionShow": "顯示按鈕",
+  "settings.quickActionLabel": "按鈕文字",
+  "settings.quickActionLabelDesc": "卡片上顯示的文字（例如 Done）。",
+  "settings.quickActionField": "目標欄位",
+  "settings.quickActionFieldDesc": "要更新的 frontmatter 欄位。",
+  "settings.quickActionValue": "設定的值",
+  "settings.quickActionValueDesc": "點擊按鈕時寫入欄位的值。",
+  "settings.hierarchyHeading": "父子關係",
+  "settings.hierarchyDesc": "以 frontmatter wikilink 管理卡片之間的父子關係。子筆記的父連結是權威資料，父筆記的子清單自動產生，因此可以在 Obsidian 的關聯圖中追蹤層級。",
+  "settings.parentField": "父欄位名稱",
+  "settings.parentFieldDesc": "寫入子筆記的父連結 frontmatter 欄位名稱。",
+  "settings.childrenField": "子欄位名稱",
+  "settings.childrenFieldDesc": "在父筆記上自動產生的子清單 frontmatter 欄位名稱。",
+  "settings.maintainChildren": "自動維護子清單",
+  "settings.maintainChildrenDesc": "在父筆記上維護子任務的 wikilink 清單。關閉後僅寫入單向的父連結。",
+  "settings.showEmptyParent": "為新卡片加入空的父欄位",
+  "settings.showEmptyParentDesc": "即使建立卡片時未指定父任務，也寫入空的父欄位。",
+  "settings.rebuildHierarchy": "重建父子連結",
+  "settings.rebuildHierarchyDesc": "以父連結（權威資料）為準，重新產生所有子清單。",
+  "settings.rebuild": "重建",
+  "settings.displayPropsHeading": "卡片顯示屬性",
+  "settings.displayPropsDesc": "設定卡片上顯示哪些 frontmatter 屬性。",
+  "settings.fieldLabel": "欄位：{field}",
+  "settings.deleteTooltip": "刪除",
+  "settings.addFromFolder": "從任務資料夾新增",
+  "settings.addFromFolderDesc": "從任務資料夾的筆記中偵測到的 frontmatter 欄位中選擇。",
+  "settings.noNewFields": "沒有可新增的欄位",
+  "settings.addProperty": "新增屬性",
+  "settings.addPropertyDesc": "輸入 frontmatter 欄位名稱。",
+  "settings.addPropertyPlaceholder": "例如：assignee",
+  "settings.add": "新增",
+};
+
 export type TranslationKey = keyof typeof en;
 
-const LOCALES: Record<string, typeof en> = { en, ja };
+const LOCALES: Record<string, typeof en> = { en, ja, zh, "zh-TW": zhTW };
 
 /** Resolve the dictionary for the current Obsidian interface language. */
 function currentLocale(): typeof en {

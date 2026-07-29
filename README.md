@@ -19,7 +19,7 @@ Task notes are the single source of truth: creating, moving, and deleting cards 
 
 The first time you open the board, if the task folder contains no notes yet, the plugin creates the folder and seeds four sample tasks.
 
-- The sample note bodies explain basic usage (moving cards, adding tasks, customizing the board, swimlanes), generated in Japanese or English following your Obsidian language setting
+- The sample note bodies explain basic usage (moving cards, adding tasks, customizing the board, swimlanes), generated in English, Japanese, or Chinese (Simplified/Traditional) following your Obsidian language setting
 - The sample properties match the default card display properties (category / project / due / created), so the colored tags and due dates render out of the box
 - The board opens in swimlane view (lane: `project` × column: `status`); with two different `project` values included, the two-dimensional layout is visible from the start
 - This happens **only once, on the first board open**. Folders that already contain notes are left untouched, and existing notes are never modified
@@ -137,7 +137,7 @@ Configure which frontmatter fields are shown as tags on cards.
 
 Grouping (lane/column), ordering, visibility, and zoom are configured from the board options popover and saved automatically.
 
-The plugin UI is in English by default and switches to Japanese when the Obsidian interface language is set to 日本語.
+The plugin UI is in English by default and switches to Japanese or Chinese (Simplified/Traditional) following the Obsidian interface language.
 
 ## How it works
 
