@@ -207,13 +207,16 @@ export function collectAllFields(
 /**
  * Resolve column list for a field from file data, respecting saved order.
  * - Filters out "Invalid date" values
+ * - Predefined values always appear (in their defined order), even when
+ *   no note uses them yet, followed by remaining values found in files
  * - If savedOrder is provided, uses that order and appends new values
- * - Otherwise returns sorted unique values
+ * - Otherwise returns predefined order + sorted unique file values
  */
 export function resolveAllColumns(
   fileMap: Map<string, Record<string, string>>,
   field: string,
-  savedOrder?: string[]
+  savedOrder?: string[],
+  predefined?: string[]
 ): string[] {
   const valuesFromFiles = new Set<string>();
   for (const fm of fileMap.values()) {
@@ -223,9 +226,16 @@ export function resolveAllColumns(
     }
   }
 
+  const defaultOrder = [...(predefined ?? [])];
+  for (const v of [...valuesFromFiles].sort()) {
+    if (!defaultOrder.includes(v)) {
+      defaultOrder.push(v);
+    }
+  }
+
   if (savedOrder && savedOrder.length > 0) {
-    const result = savedOrder.filter((c) => valuesFromFiles.has(c));
-    for (const v of valuesFromFiles) {
+    const result = savedOrder.filter((c) => defaultOrder.includes(c));
+    for (const v of defaultOrder) {
       if (!result.includes(v)) {
         result.push(v);
       }
@@ -233,7 +243,7 @@ export function resolveAllColumns(
     return result;
   }
 
-  return [...valuesFromFiles].sort();
+  return defaultOrder;
 }
 
 /**

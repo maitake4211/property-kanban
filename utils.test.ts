@@ -606,6 +606,45 @@ describe("resolveAllColumns", () => {
   it("空のfileMapでは空配列を返す", () => {
     expect(resolveAllColumns(new Map(), "ステータス")).toEqual([]);
   });
+
+  it("事前定義列はファイルに値がなくても定義順で表示される", () => {
+    const cols = resolveAllColumns(new Map(), "ステータス", undefined, [
+      "未着手",
+      "進行中",
+      "完了",
+    ]);
+    expect(cols).toEqual(["未着手", "進行中", "完了"]);
+  });
+
+  it("事前定義列が先頭、ファイル由来の値がその後に続く", () => {
+    const cols = resolveAllColumns(fileMap, "ステータス", undefined, ["保留"]);
+    expect(cols).toEqual(["保留", "完了", "未着手", "進行中"]);
+  });
+
+  it("事前定義列とファイル値が重複しても1つにまとまる", () => {
+    const cols = resolveAllColumns(fileMap, "ステータス", undefined, [
+      "未着手",
+      "進行中",
+      "完了",
+    ]);
+    expect(cols).toEqual(["未着手", "進行中", "完了"]);
+  });
+
+  it("savedOrderは事前定義列にも適用され、未指定の値は末尾に追加される", () => {
+    const cols = resolveAllColumns(new Map(), "ステータス", ["完了", "未着手"], [
+      "未着手",
+      "進行中",
+      "完了",
+    ]);
+    expect(cols).toEqual(["完了", "未着手", "進行中"]);
+  });
+
+  it("savedOrderにあるが事前定義にもファイルにもない値は除外される", () => {
+    const cols = resolveAllColumns(new Map(), "ステータス", ["削除済み", "未着手"], [
+      "未着手",
+    ]);
+    expect(cols).toEqual(["未着手"]);
+  });
 });
 
 // ============================================================

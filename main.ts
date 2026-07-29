@@ -61,8 +61,8 @@ interface DisplayProperty {
 
 interface PropertyKanbanSettings {
   taskFolder: string;
-  statusField: string;
-  columns: string[];
+  /** Grouping field -> column values that always appear on the board */
+  predefinedColumns: Record<string, string[]>;
   createdField: string;
   cardDisplayProperties: DisplayProperty[];
   skipDeleteConfirm: boolean;
@@ -86,8 +86,7 @@ interface PropertyKanbanSettings {
 
 const DEFAULT_SETTINGS: PropertyKanbanSettings = {
   taskFolder: "tasks",
-  statusField: "status",
-  columns: ["To do", "In progress", "Done"],
+  predefinedColumns: { status: ["To do", "In progress", "Done"] },
   createdField: "created",
   cardDisplayProperties: [
     { field: "category", label: "category", enabled: true, color: "blue", prefix: "", hideInvalid: false },
@@ -161,7 +160,17 @@ export default class PropertyKanbanPlugin extends Plugin {
   }
 
   async loadSettings() {
-    const saved = (await this.loadData()) as Partial<PropertyKanbanSettings> | null;
+    const saved = (await this.loadData()) as
+      | (Partial<PropertyKanbanSettings> & { statusField?: string; columns?: string[] })
+      | null;
+    // Migrate the legacy statusField/columns pair into predefinedColumns
+    if (saved && !saved.predefinedColumns && saved.statusField && Array.isArray(saved.columns)) {
+      saved.predefinedColumns = { [saved.statusField]: saved.columns };
+    }
+    if (saved) {
+      delete saved.statusField;
+      delete saved.columns;
+    }
     this.settings = Object.assign({}, DEFAULT_SETTINGS, saved);
   }
 
@@ -974,7 +983,8 @@ class KanbanView extends ItemView {
     return resolveAllColumnsFn(
       this.fileMap,
       field,
-      this.plugin.settings.columnOrders[field]
+      this.plugin.settings.columnOrders[field],
+      this.plugin.settings.predefinedColumns[field]
     );
   }
 
@@ -1003,7 +1013,12 @@ class KanbanView extends ItemView {
   }
 
   private collectFields(): string[] {
-    return collectAllFields(this.fileMap);
+    const fields = new Set(collectAllFields(this.fileMap));
+    // Predefined grouping fields are selectable even before any note uses them
+    for (const [field, values] of Object.entries(this.plugin.settings.predefinedColumns)) {
+      if (values.length > 0) fields.add(field);
+    }
+    return [...fields].sort();
   }
 
   /** Resolve visible columns (hidden ones filtered out) */
@@ -1569,9 +1584,11 @@ class CardCreateModal extends Modal {
     this.selectedParent = defaultParent ?? null;
   }
 
-  /** Collect unique values for a field from existing tasks */
+  /** Collect unique values for a field from existing tasks and predefined columns */
   private getFieldValues(field: string): string[] {
-    const values = new Set<string>();
+    const values = new Set<string>(
+      this.plugin.settings.predefinedColumns[field] ?? []
+    );
     for (const fm of this.fileMap.values()) {
       const v = fm[field];
       if (v && v !== "Invalid date") values.add(v);
@@ -1763,6 +1780,61 @@ class PropertyKanbanSettingTab extends PluginSettingTab {
         text.setValue(this.plugin.settings.taskFolder).onChange(async (v) => {
           this.plugin.settings.taskFolder = v;
           await this.plugin.saveSettings();
+        })
+      );
+
+    // Predefined columns (grouping property + its column values)
+    new Setting(containerEl)
+      .setName(t("settings.predefinedHeading"))
+      .setDesc(t("settings.predefinedDesc"))
+      .setHeading();
+
+    const predefinedContainer = containerEl.createDiv();
+    const renderPredefined = () => {
+      predefinedContainer.empty();
+      for (const [field, values] of Object.entries(this.plugin.settings.predefinedColumns)) {
+        new Setting(predefinedContainer)
+          .setName(field)
+          .setDesc(t("settings.predefinedValuesDesc"))
+          .addTextArea((text) => {
+            text.setValue(values.join("\n")).onChange(async (v) => {
+              this.plugin.settings.predefinedColumns[field] = v
+                .split("\n")
+                .map((s) => s.trim())
+                .filter((s) => s.length > 0);
+              await this.plugin.saveSettings();
+              this.plugin.refreshViews();
+            });
+            text.inputEl.rows = 4;
+          })
+          .addExtraButton((btn) =>
+            btn.setIcon("trash").setTooltip(t("settings.deleteTooltip")).onClick(async () => {
+              delete this.plugin.settings.predefinedColumns[field];
+              await this.plugin.saveSettings();
+              this.plugin.refreshViews();
+              renderPredefined();
+            })
+          );
+      }
+    };
+    renderPredefined();
+
+    let predefinedFieldInput: TextComponent | null = null;
+    new Setting(containerEl)
+      .setName(t("settings.predefinedAddField"))
+      .setDesc(t("settings.predefinedAddFieldDesc"))
+      .addText((text) => {
+        predefinedFieldInput = text;
+        text.setPlaceholder(t("settings.predefinedFieldPlaceholder"));
+      })
+      .addButton((btn) =>
+        btn.setButtonText(t("settings.add")).onClick(async () => {
+          const field = predefinedFieldInput?.getValue().trim();
+          if (!field || this.plugin.settings.predefinedColumns[field]) return;
+          predefinedFieldInput?.setValue("");
+          this.plugin.settings.predefinedColumns[field] = [];
+          await this.plugin.saveSettings();
+          renderPredefined();
         })
       );
 
