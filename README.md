@@ -21,7 +21,7 @@ The first time you open the board, if the task folder contains no notes yet, the
 
 - The sample note bodies explain basic usage (moving cards, adding tasks, customizing the board, swimlanes), generated in Japanese or English following your Obsidian language setting
 - The sample properties match the default card display properties (category / project / due / created), so the colored tags and due dates render out of the box
-- Two different `project` values are included, so switching the lane to `project` in the ⚙ board options shows the swimlane view immediately
+- The board opens in swimlane view (lane: `project` × column: `status`); with two different `project` values included, the two-dimensional layout is visible from the start
 - This happens **only once, on the first board open**. Folders that already contain notes are left untouched, and existing notes are never modified
 - Delete the sample cards from the board whenever you no longer need them
 
@@ -117,8 +117,8 @@ Configure which frontmatter fields are shown as tags on cards.
 
 1. Enable the plugin
 2. Click the dashboard icon in the left ribbon, or run `Property Kanban: Open board` from the command palette
-3. The board opens. On first open, the task folder and four sample tasks with a short usage guide are created automatically, laid out in To do / In progress / Done columns for the `status` property
-4. To match your own notes, pick any frontmatter property (e.g. `state`) as the lane in the ⚙ board options — columns are generated automatically from the values your notes actually use
+3. The board opens. On first open, the task folder and four sample tasks with a short usage guide are created automatically, shown as swimlanes (lane: `project` × column: `status`)
+4. To match your own notes, pick any frontmatter properties as the lane/column in the ⚙ board options — columns are generated automatically from the values your notes actually use (set Column to "None" for a one-dimensional board)
 
 ## Settings
 

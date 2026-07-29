@@ -111,12 +111,12 @@ const en = {
     "- Columns are generated automatically from the values your notes actually use — rename a `{field}` value in a note and the column follows\n" +
     "- The ⚙ button on the board switches the grouping property (lane/column), sorting, column visibility, and zoom\n" +
     "- Settings → Property Kanban → \"Card display properties\" chooses which properties appear on cards, with colors",
-  "sample.title4": "4. Try swimlanes",
+  "sample.title4": "4. How swimlanes work",
   "sample.body4":
-    "The board can also group in two dimensions (swimlanes) using two properties.\n\n" +
-    "- Open ⚙ on the board and set Lane to `project` and Column to `{field}`\n" +
-    "- The board splits into one row per project (Sample project A / Sample project B), with `{field}` columns inside each row\n" +
-    "- Dragging a card across lanes updates both properties at once",
+    "The board opens in swimlane view: one row per `project` (Sample project A / Sample project B), with `{field}` columns inside each row.\n\n" +
+    "- Dragging a card across lanes updates both `project` and `{field}` at once\n" +
+    "- Any two frontmatter properties can be combined — pick them under ⚙ → Grouping (Lane / Column)\n" +
+    "- For a simple one-dimensional board, set Lane to `{field}` and Column to \"None\"",
 
   // Settings tab
   "settings.taskFolder": "Task folder",
@@ -254,12 +254,12 @@ const ja: typeof en = {
     "- 列はノートが実際に使っている値から自動生成されます。ノート側で `{field}` の値を変えれば列も変わります\n" +
     "- ボード右上の ⚙ から、グルーピングに使うプロパティ（レーン/カラム）・並び替え・列の表示/非表示・ズームを変更できます\n" +
     "- 設定 → Property Kanban →「カード表示プロパティ」でカード上に表示する項目と色を選べます",
-  "sample.title4": "4. スイムレーンを試す",
+  "sample.title4": "4. スイムレーンの仕組み",
   "sample.body4":
-    "2つのプロパティを使った二次元表示（スイムレーン）もできます。\n\n" +
-    "- ボード右上の ⚙ →「グループ」で、レーンを `project`、カラムを `{field}` にしてみてください\n" +
-    "- 案件ごとの行（サンプル案件A / サンプル案件B）に分かれ、行の中が `{field}` の列になります\n" +
-    "- レーンをまたいでカードをドラッグすると、両方のプロパティが同時に更新されます",
+    "ボードは初期状態でスイムレーン表示です。`project` ごとの行（サンプル案件A / サンプル案件B）に分かれ、行の中が `{field}` の列になっています。\n\n" +
+    "- レーンをまたいでカードをドラッグすると、`project` と `{field}` が同時に更新されます\n" +
+    "- 組み合わせは自由です。ボード右上の ⚙ →「グループ」でレーン/カラムに使うプロパティを切り替えられます\n" +
+    "- 1次元のシンプルなボードにしたい時は、レーンを `{field}`、カラムを「なし」にしてください",
 
   "settings.taskFolder": "タスクフォルダ",
   "settings.taskFolderDesc": "タスクノートを保存するフォルダパス。",

@@ -95,8 +95,8 @@ const DEFAULT_SETTINGS: PropertyKanbanSettings = {
   ],
   skipDeleteConfirm: false,
   boardZoom: 100,
-  activeGroupField: "status",
-  activeSubGroupField: "",
+  activeGroupField: "project",
+  activeSubGroupField: "status",
   sortField: "",
   sortOrder: "asc",
   columnOrders: {},
@@ -216,8 +216,6 @@ export default class PropertyKanbanPlugin extends Plugin {
       await this.app.vault.createFolder(s.taskFolder);
     }
 
-    const field = s.activeGroupField;
-
     const now = new Date();
     const pad2 = (n: number) => (n < 10 ? `0${n}` : `${n}`);
     const fmtDate = (d: Date) =>
@@ -225,7 +223,7 @@ export default class PropertyKanbanPlugin extends Plugin {
     const inDays = (days: number) =>
       fmtDate(new Date(now.getTime() + days * 24 * 60 * 60 * 1000));
 
-    const vars = { folder: s.taskFolder, field };
+    const vars = { folder: s.taskFolder, field: "status" };
     const projectA = t("sample.projectA");
     const projectB = t("sample.projectB");
     // Property fields mirror the default card display properties
@@ -245,7 +243,7 @@ export default class PropertyKanbanPlugin extends Plugin {
       if (this.app.vault.getAbstractFileByPath(path)) continue;
 
       const props: [string, string][] = [
-        [field, sample.status],
+        ["status", sample.status],
         ["category", t("sample.categoryValue")],
         ["project", sample.project],
         ["due", sample.due],
