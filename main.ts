@@ -217,36 +217,49 @@ export default class PropertyKanbanPlugin extends Plugin {
     }
 
     const field = s.activeGroupField;
-    const values = SAMPLE_STATUS_VALUES;
 
     const now = new Date();
     const pad2 = (n: number) => (n < 10 ? `0${n}` : `${n}`);
-    const dateStr = `${now.getFullYear()}-${pad2(now.getMonth() + 1)}-${pad2(now.getDate())}`;
+    const fmtDate = (d: Date) =>
+      `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`;
+    const inDays = (days: number) =>
+      fmtDate(new Date(now.getTime() + days * 24 * 60 * 60 * 1000));
 
     const vars = { folder: s.taskFolder, field };
+    const projectA = t("sample.projectA");
+    const projectB = t("sample.projectB");
+    // Property fields mirror the default card display properties
+    // (category / project / due / created) so the sample cards render the
+    // tags out of the box, and the two project values make the swimlane
+    // view meaningful (lane: project x column: status).
     const samples = [
-      { title: t("sample.title1"), body: t("sample.body1", vars) },
-      { title: t("sample.title2"), body: t("sample.body2", vars) },
-      { title: t("sample.title3"), body: t("sample.body3", vars) },
+      { title: t("sample.title1"), body: t("sample.body1", vars), status: SAMPLE_STATUS_VALUES[0], project: projectA, due: inDays(7) },
+      { title: t("sample.title2"), body: t("sample.body2", vars), status: SAMPLE_STATUS_VALUES[1], project: projectA, due: inDays(3) },
+      { title: t("sample.title3"), body: t("sample.body3", vars), status: SAMPLE_STATUS_VALUES[2], project: projectA, due: "" },
+      { title: t("sample.title4"), body: t("sample.body4", vars), status: SAMPLE_STATUS_VALUES[1], project: projectB, due: inDays(10) },
     ];
 
     let created = 0;
-    for (let i = 0; i < samples.length; i++) {
-      const path = `${s.taskFolder}/${samples[i].title}.md`;
+    for (const sample of samples) {
+      const path = `${s.taskFolder}/${sample.title}.md`;
       if (this.app.vault.getAbstractFileByPath(path)) continue;
 
-      const lines = ["---", `${field}: ${quoteIfNeeded(values[i % values.length])}`];
-      for (const dp of s.cardDisplayProperties) {
-        if (dp.field === field || dp.field === s.createdField) continue;
-        if (dp.field === s.parentField || dp.field === s.childrenField) continue;
-        // hideInvalid marks date-like fields; leave those empty so cards
-        // don't show a non-date sample value behind a "Due:" prefix
-        lines.push(
-          dp.hideInvalid ? `${dp.field}:` : `${dp.field}: ${quoteIfNeeded(t("sample.tagValue"))}`
-        );
+      const props: [string, string][] = [
+        [field, sample.status],
+        ["category", t("sample.categoryValue")],
+        ["project", sample.project],
+        ["due", sample.due],
+      ];
+      if (s.createdField) props.push([s.createdField, fmtDate(now)]);
+
+      const lines = ["---"];
+      const seen = new Set<string>();
+      for (const [key, value] of props) {
+        if (!key || seen.has(key)) continue;
+        seen.add(key);
+        lines.push(value ? `${key}: ${quoteIfNeeded(value)}` : `${key}:`);
       }
-      if (s.createdField) lines.push(`${s.createdField}: ${dateStr}`);
-      lines.push("---", "", `# ${samples[i].title}`, "", samples[i].body, "");
+      lines.push("---", "", `# ${sample.title}`, "", sample.body, "");
 
       await this.app.vault.create(path, lines.join("\n"));
       created++;

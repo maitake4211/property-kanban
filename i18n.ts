@@ -89,7 +89,9 @@ const en = {
   "notice.samplesSeeded": "Created sample tasks in \"{folder}\". Feel free to edit or delete them.",
 
   // Sample tasks seeded on first board open
-  "sample.tagValue": "Sample",
+  "sample.categoryValue": "Tutorial",
+  "sample.projectA": "Sample project A",
+  "sample.projectB": "Sample project B",
   "sample.title1": "1. Try moving this card",
   "sample.body1":
     "This is a sample card. Every card on the board is a regular Markdown note in the `{folder}` folder.\n\n" +
@@ -109,6 +111,12 @@ const en = {
     "- Columns are generated automatically from the values your notes actually use — rename a `{field}` value in a note and the column follows\n" +
     "- The ⚙ button on the board switches the grouping property (lane/column), sorting, column visibility, and zoom\n" +
     "- Settings → Property Kanban → \"Card display properties\" chooses which properties appear on cards, with colors",
+  "sample.title4": "4. Try swimlanes",
+  "sample.body4":
+    "The board can also group in two dimensions (swimlanes) using two properties.\n\n" +
+    "- Open ⚙ on the board and set Lane to `project` and Column to `{field}`\n" +
+    "- The board splits into one row per project (Sample project A / Sample project B), with `{field}` columns inside each row\n" +
+    "- Dragging a card across lanes updates both properties at once",
 
   // Settings tab
   "settings.taskFolder": "Task folder",
@@ -224,7 +232,9 @@ const ja: typeof en = {
   "notice.created": "「{title}」を作成しました",
   "notice.samplesSeeded": "サンプルタスクを「{folder}」に作成しました。自由に編集・削除できます。",
 
-  "sample.tagValue": "サンプル",
+  "sample.categoryValue": "チュートリアル",
+  "sample.projectA": "サンプル案件A",
+  "sample.projectB": "サンプル案件B",
   "sample.title1": "1. カードを動かしてみる",
   "sample.body1":
     "これはサンプルカードです。ボード上のカードは、`{folder}` フォルダ内の普通のMarkdownノートです。\n\n" +
@@ -244,6 +254,12 @@ const ja: typeof en = {
     "- 列はノートが実際に使っている値から自動生成されます。ノート側で `{field}` の値を変えれば列も変わります\n" +
     "- ボード右上の ⚙ から、グルーピングに使うプロパティ（レーン/カラム）・並び替え・列の表示/非表示・ズームを変更できます\n" +
     "- 設定 → Property Kanban →「カード表示プロパティ」でカード上に表示する項目と色を選べます",
+  "sample.title4": "4. スイムレーンを試す",
+  "sample.body4":
+    "2つのプロパティを使った二次元表示（スイムレーン）もできます。\n\n" +
+    "- ボード右上の ⚙ →「グループ」で、レーンを `project`、カラムを `{field}` にしてみてください\n" +
+    "- 案件ごとの行（サンプル案件A / サンプル案件B）に分かれ、行の中が `{field}` の列になります\n" +
+    "- レーンをまたいでカードをドラッグすると、両方のプロパティが同時に更新されます",
 
   "settings.taskFolder": "タスクフォルダ",
   "settings.taskFolderDesc": "タスクノートを保存するフォルダパス。",
