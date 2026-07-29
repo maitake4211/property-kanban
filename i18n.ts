@@ -86,6 +86,29 @@ const en = {
   "notice.titleRequired": "Enter a title",
   "notice.duplicateTask": "A task with the same name already exists",
   "notice.created": "Created \"{title}\"",
+  "notice.samplesSeeded": "Created sample tasks in \"{folder}\". Feel free to edit or delete them.",
+
+  // Sample tasks seeded on first board open
+  "sample.tagValue": "Sample",
+  "sample.title1": "1. Try moving this card",
+  "sample.body1":
+    "This is a sample card. Every card on the board is a regular Markdown note in the `{folder}` folder.\n\n" +
+    "- Drag this card to another column — the `{field}` property of this note updates instantly\n" +
+    "- Click the card title on the board to open the note\n" +
+    "- The tags on the card show the frontmatter properties above\n\n" +
+    "You can delete the sample cards whenever you like (`⋯` menu on the card → Delete).",
+  "sample.title2": "2. Add your own tasks",
+  "sample.body2":
+    "Create new tasks from the \"+ New task\" button at the top of the board, or \"+ Add card\" at the bottom of each column.\n\n" +
+    "- The create form suggests values already used by other cards, and you can type new values freely\n" +
+    "- Editing the frontmatter of this note directly also updates the board immediately\n" +
+    "- Deleting or moving the note removes the card from the board",
+  "sample.title3": "3. Make it your own",
+  "sample.body3":
+    "The board adapts to your own property names and values.\n\n" +
+    "- Settings → Property Kanban → \"Board columns (initial setup)\" changes the grouping property (e.g. `{field}`) and its column values\n" +
+    "- \"Card display properties\" chooses which properties appear on cards, with colors\n" +
+    "- The ⚙ button on the board switches lanes/columns, sorting, and zoom",
 
   // Settings tab
   "settings.taskFolder": "Task folder",
@@ -205,6 +228,28 @@ const ja: typeof en = {
   "notice.titleRequired": "タイトルを入力してください",
   "notice.duplicateTask": "同名のタスクが既に存在します",
   "notice.created": "「{title}」を作成しました",
+  "notice.samplesSeeded": "サンプルタスクを「{folder}」に作成しました。自由に編集・削除できます。",
+
+  "sample.tagValue": "サンプル",
+  "sample.title1": "1. カードを動かしてみる",
+  "sample.body1":
+    "これはサンプルカードです。ボード上のカードは、`{folder}` フォルダ内の普通のMarkdownノートです。\n\n" +
+    "- このカードを別の列へドラッグ&ドロップしてみてください。このノートの `{field}` プロパティが即座に書き換わります\n" +
+    "- ボード上のカードタイトルをクリックすると、このノートが開きます\n" +
+    "- カード上のタグは、上のfrontmatterプロパティの値です\n\n" +
+    "サンプルカードは不要になったら自由に削除してください（カードの `⋯` メニュー →「削除」）。",
+  "sample.title2": "2. タスクを追加する",
+  "sample.body2":
+    "新しいタスクは、ボード上部の「+ 新規タスク」または各列下部の「+ カード追加」から作成できます。\n\n" +
+    "- 作成フォームには他のカードで使われている値がサジェストされ、新しい値も自由に入力できます\n" +
+    "- このノートのfrontmatterを直接編集しても、ボードに即座に反映されます\n" +
+    "- ノートを削除・移動すると、カードもボードから消えます",
+  "sample.title3": "3. 自分の運用に合わせる",
+  "sample.body3":
+    "ボードは自分のプロパティ名・値に合わせてカスタマイズできます。\n\n" +
+    "- 設定 → Property Kanban →「ボードの列（初期設定）」で、グルーピングに使うプロパティ（例: `{field}`）と列の値を変更できます\n" +
+    "- 「カード表示プロパティ」でカード上に表示する項目と色を選べます\n" +
+    "- ボード右上の ⚙ からレーン/カラムの切り替え・並び替え・ズームを変更できます",
 
   "settings.taskFolder": "タスクフォルダ",
   "settings.taskFolderDesc": "タスクノートを保存するフォルダパス。",

@@ -82,6 +82,8 @@ interface PropertyKanbanSettings {
   childrenField: string;
   maintainChildrenList: boolean;
   showEmptyParentField: boolean;
+  /** One-shot flag: sample tasks were seeded (or skipped) on first board open */
+  sampleTasksSeeded: boolean;
 }
 
 const DEFAULT_SETTINGS: PropertyKanbanSettings = {
@@ -111,6 +113,7 @@ const DEFAULT_SETTINGS: PropertyKanbanSettings = {
   childrenField: "children",
   maintainChildrenList: true,
   showEmptyParentField: false,
+  sampleTasksSeeded: false,
 };
 
 const DEFAULT_LANE_HEIGHT = 500;
@@ -149,6 +152,7 @@ export default class PropertyKanbanPlugin extends Plugin {
   }
 
   async activateView() {
+    await this.seedSampleTasksIfNeeded();
     const { workspace } = this.app;
     let leaf = workspace.getLeavesOfType(VIEW_TYPE)[0];
     if (!leaf) {
@@ -183,6 +187,76 @@ export default class PropertyKanbanPlugin extends Plugin {
     for (const leaf of this.app.workspace.getLeavesOfType(VIEW_TYPE)) {
       const view = leaf.view;
       if (view instanceof KanbanView) void view.refresh();
+    }
+  }
+
+  /**
+   * First-run onboarding: when the board is opened for the first time and
+   * the task folder has no notes yet, create the folder and seed sample
+   * cards whose bodies explain basic usage (localized via i18n). Runs at
+   * most once and never touches folders that already contain notes.
+   */
+  private async seedSampleTasksIfNeeded(): Promise<void> {
+    if (this.settings.sampleTasksSeeded) return;
+    this.settings.sampleTasksSeeded = true;
+    await this.saveSettings();
+
+    const s = this.settings;
+    const existing = this.app.vault.getAbstractFileByPath(s.taskFolder);
+    if (existing instanceof TFolder) {
+      const hasNotes = existing.children.some(
+        (f) => f instanceof TFile && f.extension === "md"
+      );
+      if (hasNotes) return;
+    } else if (existing) {
+      return; // path exists but is not a folder
+    } else {
+      await this.app.vault.createFolder(s.taskFolder);
+    }
+
+    let field = s.activeGroupField;
+    let values = s.predefinedColumns[field] ?? [];
+    if (values.length === 0) {
+      const entry = Object.entries(s.predefinedColumns).find(([, v]) => v.length > 0);
+      if (!entry) return;
+      [field, values] = entry;
+    }
+
+    const now = new Date();
+    const pad2 = (n: number) => (n < 10 ? `0${n}` : `${n}`);
+    const dateStr = `${now.getFullYear()}-${pad2(now.getMonth() + 1)}-${pad2(now.getDate())}`;
+
+    const vars = { folder: s.taskFolder, field };
+    const samples = [
+      { title: t("sample.title1"), body: t("sample.body1", vars) },
+      { title: t("sample.title2"), body: t("sample.body2", vars) },
+      { title: t("sample.title3"), body: t("sample.body3", vars) },
+    ];
+
+    let created = 0;
+    for (let i = 0; i < samples.length; i++) {
+      const path = `${s.taskFolder}/${samples[i].title}.md`;
+      if (this.app.vault.getAbstractFileByPath(path)) continue;
+
+      const lines = ["---", `${field}: ${quoteIfNeeded(values[i % values.length])}`];
+      for (const dp of s.cardDisplayProperties) {
+        if (dp.field === field || dp.field === s.createdField) continue;
+        if (dp.field === s.parentField || dp.field === s.childrenField) continue;
+        // hideInvalid marks date-like fields; leave those empty so cards
+        // don't show a non-date sample value behind a "Due:" prefix
+        lines.push(
+          dp.hideInvalid ? `${dp.field}:` : `${dp.field}: ${quoteIfNeeded(t("sample.tagValue"))}`
+        );
+      }
+      if (s.createdField) lines.push(`${s.createdField}: ${dateStr}`);
+      lines.push("---", "", `# ${samples[i].title}`, "", samples[i].body, "");
+
+      await this.app.vault.create(path, lines.join("\n"));
+      created++;
+    }
+
+    if (created > 0) {
+      new Notice(t("notice.samplesSeeded", { folder: s.taskFolder }));
     }
   }
 

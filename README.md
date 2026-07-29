@@ -25,6 +25,14 @@ You can predefine the grouping property (e.g. `status`) and its column values (e
 - Multiple properties can be registered, each with its own list of column values
 - `status: To do / In progress / Done` is registered by default; rename or delete it freely to match your own properties
 
+### First-run setup (automatic sample tasks)
+
+The first time you open the board, if the task folder contains no notes yet, the plugin creates the folder and seeds three sample tasks.
+
+- The sample note bodies explain basic usage (moving cards, adding tasks, customizing the board), generated in Japanese or English following your Obsidian language setting
+- This happens **only once, on the first board open**. Folders that already contain notes are left untouched, and existing notes are never modified
+- Delete the sample cards from the board whenever you no longer need them
+
 ### Swimlanes
 
 Group in two dimensions using two properties:
@@ -117,7 +125,7 @@ Configure which frontmatter fields are shown as tags on cards.
 
 1. Enable the plugin
 2. Click the dashboard icon in the left ribbon, or run `Property Kanban: Open board` from the command palette
-3. The board opens. Out of the box it shows To do / In progress / Done columns for the `status` property
+3. The board opens. On first open, the task folder and three sample tasks with a short usage guide are created automatically, laid out in To do / In progress / Done columns for the `status` property
 4. To match your own notes, define your property name (e.g. `state`) and column values in Settings → "Board columns (initial setup)", then pick that property as the lane in the ⚙ board options
 
 ## Settings
