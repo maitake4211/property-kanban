@@ -33,6 +33,7 @@ import {
   collectAllFields,
   resolveAllColumns as resolveAllColumnsFn,
   isColumnHidden as isColumnHiddenFn,
+  buildSampleTaskContent,
 } from "./utils";
 
 // ============================================================
@@ -242,24 +243,12 @@ export default class PropertyKanbanPlugin extends Plugin {
       const path = `${s.taskFolder}/${sample.title}.md`;
       if (this.app.vault.getAbstractFileByPath(path)) continue;
 
-      const props: [string, string][] = [
-        ["status", sample.status],
-        ["category", t("sample.categoryValue")],
-        ["project", sample.project],
-        ["due", sample.due],
-      ];
-      if (s.createdField) props.push([s.createdField, fmtDate(now)]);
-
-      const lines = ["---"];
-      const seen = new Set<string>();
-      for (const [key, value] of props) {
-        if (!key || seen.has(key)) continue;
-        seen.add(key);
-        lines.push(value ? `${key}: ${quoteIfNeeded(value)}` : `${key}:`);
-      }
-      lines.push("---", "", `# ${sample.title}`, "", sample.body, "");
-
-      await this.app.vault.create(path, lines.join("\n"));
+      const content = buildSampleTaskContent(sample, {
+        category: t("sample.categoryValue"),
+        createdField: s.createdField,
+        createdDate: fmtDate(now),
+      });
+      await this.app.vault.create(path, content);
       created++;
     }
 

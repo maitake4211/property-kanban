@@ -12,6 +12,7 @@ import {
   collectAllFields,
   resolveAllColumns,
   isColumnHidden,
+  buildSampleTaskContent,
 } from "./utils";
 
 // ============================================================
@@ -635,5 +636,95 @@ describe("isColumnHidden", () => {
 
   it("空のhiddenColumnsではfalseを返す", () => {
     expect(isColumnHidden({}, "ステータス", "完了")).toBe(false);
+  });
+});
+
+// ============================================================
+// buildSampleTaskContent
+// ============================================================
+
+describe("buildSampleTaskContent", () => {
+  const sample = {
+    title: "1. カードを動かしてみる",
+    body: "これはサンプルカードです。",
+    status: "To do",
+    project: "サンプル案件A",
+    due: "2026-08-05",
+  };
+  const opts = {
+    category: "チュートリアル",
+    createdField: "created",
+    createdDate: "2026-07-29",
+  };
+
+  it("カード表示プロパティのデフォルト項目と同じフィールドをこの順で出力する", () => {
+    const content = buildSampleTaskContent(sample, opts);
+    expect(content).toBe(
+      [
+        "---",
+        "status: To do",
+        "category: チュートリアル",
+        "project: サンプル案件A",
+        "due: 2026-08-05",
+        "created: 2026-07-29",
+        "---",
+        "",
+        "# 1. カードを動かしてみる",
+        "",
+        "これはサンプルカードです。",
+        "",
+      ].join("\n")
+    );
+  });
+
+  it("生成された frontmatter は parseFrontmatter で読み戻せる", () => {
+    const fm = parseFrontmatter(buildSampleTaskContent(sample, opts));
+    expect(fm).toEqual({
+      status: "To do",
+      category: "チュートリアル",
+      project: "サンプル案件A",
+      due: "2026-08-05",
+      created: "2026-07-29",
+    });
+  });
+
+  it("空のdueは値なしのプレースホルダ行になる", () => {
+    const content = buildSampleTaskContent({ ...sample, due: "" }, opts);
+    expect(content).toContain("\ndue:\n");
+    expect(content).not.toContain("due: ");
+  });
+
+  it("コロンを含む値は引用符付きで出力される", () => {
+    const content = buildSampleTaskContent(
+      { ...sample, project: "案件: A" },
+      opts
+    );
+    expect(content).toContain('project: "案件: A"');
+  });
+
+  it("createdFieldが他のフィールドと重複しても行は1つだけ", () => {
+    const content = buildSampleTaskContent(sample, {
+      ...opts,
+      createdField: "status",
+    });
+    const statusLines = content
+      .split("\n")
+      .filter((l) => l.startsWith("status:"));
+    expect(statusLines).toEqual(["status: To do"]);
+  });
+
+  it("createdFieldが空なら作成日行を出力しない", () => {
+    const content = buildSampleTaskContent(sample, {
+      ...opts,
+      createdField: "",
+    });
+    expect(content).not.toContain("created");
+    expect(content).not.toContain("2026-07-29");
+  });
+
+  it("本文とタイトル見出しが含まれる", () => {
+    const content = buildSampleTaskContent(sample, opts);
+    expect(content).toContain("# 1. カードを動かしてみる");
+    expect(content).toContain("これはサンプルカードです。");
   });
 });
