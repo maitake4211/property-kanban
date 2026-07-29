@@ -15,6 +15,16 @@ Task notes are the single source of truth: creating, moving, and deleting cards 
 - Click a card title to open the note (if the note is already open in another tab, jumps to that tab instead of opening a duplicate)
 - File changes, creations, and deletions are detected in real time and the board refreshes automatically
 
+### First-run setup (automatic sample tasks)
+
+The first time you open the board, if the task folder contains no notes yet, the plugin creates the folder and seeds four sample tasks.
+
+- The sample note bodies explain basic usage (moving cards, adding tasks, customizing the board, swimlanes), generated in Japanese or English following your Obsidian language setting
+- The sample properties match the default card display properties (category / project / due / created), so the colored tags and due dates render out of the box
+- The board opens in swimlane view (lane: `project` × column: `status`); with two different `project` values included, the two-dimensional layout is visible from the start
+- This happens **only once, on the first board open**. Folders that already contain notes are left untouched, and existing notes are never modified
+- Delete the sample cards from the board whenever you no longer need them
+
 ### Swimlanes
 
 Group in two dimensions using two properties:
@@ -107,7 +117,8 @@ Configure which frontmatter fields are shown as tags on cards.
 
 1. Enable the plugin
 2. Click the dashboard icon in the left ribbon, or run `Property Kanban: Open board` from the command palette
-3. The board opens
+3. The board opens. On first open, the task folder and four sample tasks with a short usage guide are created automatically, shown as swimlanes (lane: `project` × column: `status`)
+4. To match your own notes, pick any frontmatter properties as the lane/column in the ⚙ board options — columns are generated automatically from the values your notes actually use (set Column to "None" for a one-dimensional board)
 
 ## Settings
 

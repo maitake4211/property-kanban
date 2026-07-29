@@ -86,6 +86,37 @@ const en = {
   "notice.titleRequired": "Enter a title",
   "notice.duplicateTask": "A task with the same name already exists",
   "notice.created": "Created \"{title}\"",
+  "notice.samplesSeeded": "Created sample tasks in \"{folder}\". Feel free to edit or delete them.",
+
+  // Sample tasks seeded on first board open
+  "sample.categoryValue": "Tutorial",
+  "sample.projectA": "Sample project A",
+  "sample.projectB": "Sample project B",
+  "sample.title1": "1. Try moving this card",
+  "sample.body1":
+    "This is a sample card. Every card on the board is a regular Markdown note in the `{folder}` folder.\n\n" +
+    "- Drag this card to another column — the `{field}` property of this note updates instantly\n" +
+    "- Click the card title on the board to open the note\n" +
+    "- The tags on the card show the frontmatter properties above\n\n" +
+    "You can delete the sample cards whenever you like (`⋯` menu on the card → Delete).",
+  "sample.title2": "2. Add your own tasks",
+  "sample.body2":
+    "Create new tasks from the \"+ New task\" button at the top of the board, or \"+ Add card\" at the bottom of each column.\n\n" +
+    "- The create form suggests values already used by other cards, and you can type new values freely\n" +
+    "- Editing the frontmatter of this note directly also updates the board immediately\n" +
+    "- Deleting or moving the note removes the card from the board",
+  "sample.title3": "3. Make it your own",
+  "sample.body3":
+    "The board adapts to your own property names and values.\n\n" +
+    "- Columns are generated automatically from the values your notes actually use — rename a `{field}` value in a note and the column follows\n" +
+    "- The ⚙ button on the board switches the grouping property (lane/column), sorting, column visibility, and zoom\n" +
+    "- Settings → Property Kanban → \"Card display properties\" chooses which properties appear on cards, with colors",
+  "sample.title4": "4. How swimlanes work",
+  "sample.body4":
+    "The board opens in swimlane view: one row per `project` (Sample project A / Sample project B), with `{field}` columns inside each row.\n\n" +
+    "- Dragging a card across lanes updates both `project` and `{field}` at once\n" +
+    "- Any two frontmatter properties can be combined — pick them under ⚙ → Grouping (Lane / Column)\n" +
+    "- For a simple one-dimensional board, set Lane to `{field}` and Column to \"None\"",
 
   // Settings tab
   "settings.taskFolder": "Task folder",
@@ -199,6 +230,36 @@ const ja: typeof en = {
   "notice.titleRequired": "タイトルを入力してください",
   "notice.duplicateTask": "同名のタスクが既に存在します",
   "notice.created": "「{title}」を作成しました",
+  "notice.samplesSeeded": "サンプルタスクを「{folder}」に作成しました。自由に編集・削除できます。",
+
+  "sample.categoryValue": "チュートリアル",
+  "sample.projectA": "サンプル案件A",
+  "sample.projectB": "サンプル案件B",
+  "sample.title1": "1. カードを動かしてみる",
+  "sample.body1":
+    "これはサンプルカードです。ボード上のカードは、`{folder}` フォルダ内の普通のMarkdownノートです。\n\n" +
+    "- このカードを別の列へドラッグ&ドロップしてみてください。このノートの `{field}` プロパティが即座に書き換わります\n" +
+    "- ボード上のカードタイトルをクリックすると、このノートが開きます\n" +
+    "- カード上のタグは、上のfrontmatterプロパティの値です\n\n" +
+    "サンプルカードは不要になったら自由に削除してください（カードの `⋯` メニュー →「削除」）。",
+  "sample.title2": "2. タスクを追加する",
+  "sample.body2":
+    "新しいタスクは、ボード上部の「+ 新規タスク」または各列下部の「+ カード追加」から作成できます。\n\n" +
+    "- 作成フォームには他のカードで使われている値がサジェストされ、新しい値も自由に入力できます\n" +
+    "- このノートのfrontmatterを直接編集しても、ボードに即座に反映されます\n" +
+    "- ノートを削除・移動すると、カードもボードから消えます",
+  "sample.title3": "3. 自分の運用に合わせる",
+  "sample.body3":
+    "ボードは自分のプロパティ名・値に合わせてカスタマイズできます。\n\n" +
+    "- 列はノートが実際に使っている値から自動生成されます。ノート側で `{field}` の値を変えれば列も変わります\n" +
+    "- ボード右上の ⚙ から、グルーピングに使うプロパティ（レーン/カラム）・並び替え・列の表示/非表示・ズームを変更できます\n" +
+    "- 設定 → Property Kanban →「カード表示プロパティ」でカード上に表示する項目と色を選べます",
+  "sample.title4": "4. スイムレーンの仕組み",
+  "sample.body4":
+    "ボードは初期状態でスイムレーン表示です。`project` ごとの行（サンプル案件A / サンプル案件B）に分かれ、行の中が `{field}` の列になっています。\n\n" +
+    "- レーンをまたいでカードをドラッグすると、`project` と `{field}` が同時に更新されます\n" +
+    "- 組み合わせは自由です。ボード右上の ⚙ →「グループ」でレーン/カラムに使うプロパティを切り替えられます\n" +
+    "- 1次元のシンプルなボードにしたい時は、レーンを `{field}`、カラムを「なし」にしてください",
 
   "settings.taskFolder": "タスクフォルダ",
   "settings.taskFolderDesc": "タスクノートを保存するフォルダパス。",

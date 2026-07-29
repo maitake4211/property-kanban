@@ -33,6 +33,7 @@ import {
   collectAllFields,
   resolveAllColumns as resolveAllColumnsFn,
   isColumnHidden as isColumnHiddenFn,
+  buildSampleTaskContent,
 } from "./utils";
 
 // ============================================================
@@ -61,8 +62,6 @@ interface DisplayProperty {
 
 interface PropertyKanbanSettings {
   taskFolder: string;
-  statusField: string;
-  columns: string[];
   createdField: string;
   cardDisplayProperties: DisplayProperty[];
   skipDeleteConfirm: boolean;
@@ -82,12 +81,12 @@ interface PropertyKanbanSettings {
   childrenField: string;
   maintainChildrenList: boolean;
   showEmptyParentField: boolean;
+  /** One-shot flag: sample tasks were seeded (or skipped) on first board open */
+  sampleTasksSeeded: boolean;
 }
 
 const DEFAULT_SETTINGS: PropertyKanbanSettings = {
   taskFolder: "tasks",
-  statusField: "status",
-  columns: ["To do", "In progress", "Done"],
   createdField: "created",
   cardDisplayProperties: [
     { field: "category", label: "category", enabled: true, color: "blue", prefix: "", hideInvalid: false },
@@ -97,8 +96,8 @@ const DEFAULT_SETTINGS: PropertyKanbanSettings = {
   ],
   skipDeleteConfirm: false,
   boardZoom: 100,
-  activeGroupField: "status",
-  activeSubGroupField: "",
+  activeGroupField: "project",
+  activeSubGroupField: "status",
   sortField: "",
   sortOrder: "asc",
   columnOrders: {},
@@ -112,9 +111,13 @@ const DEFAULT_SETTINGS: PropertyKanbanSettings = {
   childrenField: "children",
   maintainChildrenList: true,
   showEmptyParentField: false,
+  sampleTasksSeeded: false,
 };
 
 const DEFAULT_LANE_HEIGHT = 500;
+
+/** Column values written to the seeded sample tasks on first board open */
+const SAMPLE_STATUS_VALUES = ["To do", "In progress", "Done"];
 
 const VIEW_TYPE = "property-kanban-view";
 
@@ -150,6 +153,7 @@ export default class PropertyKanbanPlugin extends Plugin {
   }
 
   async activateView() {
+    await this.seedSampleTasksIfNeeded();
     const { workspace } = this.app;
     let leaf = workspace.getLeavesOfType(VIEW_TYPE)[0];
     if (!leaf) {
@@ -161,7 +165,19 @@ export default class PropertyKanbanPlugin extends Plugin {
   }
 
   async loadSettings() {
-    const saved = (await this.loadData()) as Partial<PropertyKanbanSettings> | null;
+    const saved = (await this.loadData()) as
+      | (Partial<PropertyKanbanSettings> & {
+          statusField?: string;
+          columns?: string[];
+          predefinedColumns?: Record<string, string[]>;
+        })
+      | null;
+    // Drop settings from retired features (fixed status columns, predefined columns)
+    if (saved) {
+      delete saved.statusField;
+      delete saved.columns;
+      delete saved.predefinedColumns;
+    }
     this.settings = Object.assign({}, DEFAULT_SETTINGS, saved);
   }
 
@@ -174,6 +190,70 @@ export default class PropertyKanbanPlugin extends Plugin {
     for (const leaf of this.app.workspace.getLeavesOfType(VIEW_TYPE)) {
       const view = leaf.view;
       if (view instanceof KanbanView) void view.refresh();
+    }
+  }
+
+  /**
+   * First-run onboarding: when the board is opened for the first time and
+   * the task folder has no notes yet, create the folder and seed sample
+   * cards whose bodies explain basic usage (localized via i18n). Runs at
+   * most once and never touches folders that already contain notes.
+   */
+  private async seedSampleTasksIfNeeded(): Promise<void> {
+    if (this.settings.sampleTasksSeeded) return;
+    this.settings.sampleTasksSeeded = true;
+    await this.saveSettings();
+
+    const s = this.settings;
+    const existing = this.app.vault.getAbstractFileByPath(s.taskFolder);
+    if (existing instanceof TFolder) {
+      const hasNotes = existing.children.some(
+        (f) => f instanceof TFile && f.extension === "md"
+      );
+      if (hasNotes) return;
+    } else if (existing) {
+      return; // path exists but is not a folder
+    } else {
+      await this.app.vault.createFolder(s.taskFolder);
+    }
+
+    const now = new Date();
+    const pad2 = (n: number) => (n < 10 ? `0${n}` : `${n}`);
+    const fmtDate = (d: Date) =>
+      `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`;
+    const inDays = (days: number) =>
+      fmtDate(new Date(now.getTime() + days * 24 * 60 * 60 * 1000));
+
+    const vars = { folder: s.taskFolder, field: "status" };
+    const projectA = t("sample.projectA");
+    const projectB = t("sample.projectB");
+    // Property fields mirror the default card display properties
+    // (category / project / due / created) so the sample cards render the
+    // tags out of the box, and the two project values make the swimlane
+    // view meaningful (lane: project x column: status).
+    const samples = [
+      { title: t("sample.title1"), body: t("sample.body1", vars), status: SAMPLE_STATUS_VALUES[0], project: projectA, due: inDays(7) },
+      { title: t("sample.title2"), body: t("sample.body2", vars), status: SAMPLE_STATUS_VALUES[1], project: projectA, due: inDays(3) },
+      { title: t("sample.title3"), body: t("sample.body3", vars), status: SAMPLE_STATUS_VALUES[2], project: projectA, due: "" },
+      { title: t("sample.title4"), body: t("sample.body4", vars), status: SAMPLE_STATUS_VALUES[1], project: projectB, due: inDays(10) },
+    ];
+
+    let created = 0;
+    for (const sample of samples) {
+      const path = `${s.taskFolder}/${sample.title}.md`;
+      if (this.app.vault.getAbstractFileByPath(path)) continue;
+
+      const content = buildSampleTaskContent(sample, {
+        category: t("sample.categoryValue"),
+        createdField: s.createdField,
+        createdDate: fmtDate(now),
+      });
+      await this.app.vault.create(path, content);
+      created++;
+    }
+
+    if (created > 0) {
+      new Notice(t("notice.samplesSeeded", { folder: s.taskFolder }));
     }
   }
 

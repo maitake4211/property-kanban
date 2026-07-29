@@ -236,6 +236,47 @@ export function resolveAllColumns(
   return [...valuesFromFiles].sort();
 }
 
+/** One sample task seeded on first board open. */
+export interface SampleTaskSpec {
+  title: string;
+  body: string;
+  status: string;
+  project: string;
+  due: string;
+}
+
+/**
+ * Build the full note content for a seeded sample task.
+ * - Frontmatter fields mirror the default card display properties
+ *   (status / category / project / due / created)
+ * - Empty values are written as bare `field:` placeholders
+ * - Duplicate field names are skipped (first occurrence wins), so a
+ *   createdField colliding with another field never produces two entries
+ * - An empty createdField writes no created date line
+ */
+export function buildSampleTaskContent(
+  sample: SampleTaskSpec,
+  opts: { category: string; createdField: string; createdDate: string }
+): string {
+  const props: [string, string][] = [
+    ["status", sample.status],
+    ["category", opts.category],
+    ["project", sample.project],
+    ["due", sample.due],
+  ];
+  if (opts.createdField) props.push([opts.createdField, opts.createdDate]);
+
+  const lines = ["---"];
+  const seen = new Set<string>();
+  for (const [key, value] of props) {
+    if (!key || seen.has(key)) continue;
+    seen.add(key);
+    lines.push(value ? `${key}: ${quoteIfNeeded(value)}` : `${key}:`);
+  }
+  lines.push("---", "", `# ${sample.title}`, "", sample.body, "");
+  return lines.join("\n");
+}
+
 /**
  * Check if a column is collapsed for a given field.
  */
