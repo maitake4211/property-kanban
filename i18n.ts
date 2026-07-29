@@ -106,19 +106,13 @@ const en = {
   "sample.title3": "3. Make it your own",
   "sample.body3":
     "The board adapts to your own property names and values.\n\n" +
-    "- Settings → Property Kanban → \"Board columns (initial setup)\" changes the grouping property (e.g. `{field}`) and its column values\n" +
-    "- \"Card display properties\" chooses which properties appear on cards, with colors\n" +
-    "- The ⚙ button on the board switches lanes/columns, sorting, and zoom",
+    "- Columns are generated automatically from the values your notes actually use — rename a `{field}` value in a note and the column follows\n" +
+    "- The ⚙ button on the board switches the grouping property (lane/column), sorting, column visibility, and zoom\n" +
+    "- Settings → Property Kanban → \"Card display properties\" chooses which properties appear on cards, with colors",
 
   // Settings tab
   "settings.taskFolder": "Task folder",
   "settings.taskFolderDesc": "Folder path where task notes are stored.",
-  "settings.predefinedHeading": "Board columns (initial setup)",
-  "settings.predefinedDesc": "Define a grouping property and the column values that always appear on the board, even before any note uses them (e.g. status: To do / In progress / Done). Values found in your notes are added as extra columns automatically.",
-  "settings.predefinedValuesDesc": "Column values, one per line. Shown in this order.",
-  "settings.predefinedAddField": "Add grouping property",
-  "settings.predefinedAddFieldDesc": "Frontmatter field name to group cards by.",
-  "settings.predefinedFieldPlaceholder": "e.g. status",
   "settings.quickActionHeading": "Quick action button",
   "settings.quickActionDesc": "Show a button on each card that instantly sets a property to a preset value.",
   "settings.quickActionShow": "Show button",
@@ -247,18 +241,12 @@ const ja: typeof en = {
   "sample.title3": "3. 自分の運用に合わせる",
   "sample.body3":
     "ボードは自分のプロパティ名・値に合わせてカスタマイズできます。\n\n" +
-    "- 設定 → Property Kanban →「ボードの列（初期設定）」で、グルーピングに使うプロパティ（例: `{field}`）と列の値を変更できます\n" +
-    "- 「カード表示プロパティ」でカード上に表示する項目と色を選べます\n" +
-    "- ボード右上の ⚙ からレーン/カラムの切り替え・並び替え・ズームを変更できます",
+    "- 列はノートが実際に使っている値から自動生成されます。ノート側で `{field}` の値を変えれば列も変わります\n" +
+    "- ボード右上の ⚙ から、グルーピングに使うプロパティ（レーン/カラム）・並び替え・列の表示/非表示・ズームを変更できます\n" +
+    "- 設定 → Property Kanban →「カード表示プロパティ」でカード上に表示する項目と色を選べます",
 
   "settings.taskFolder": "タスクフォルダ",
   "settings.taskFolderDesc": "タスクノートを保存するフォルダパス。",
-  "settings.predefinedHeading": "ボードの列（初期設定）",
-  "settings.predefinedDesc": "グルーピングに使うプロパティと、その列の値を事前定義します。定義した列はノートが1件もなくてもボードに表示されます（例: ステータス: 未着手 / 進行中 / 完了）。ノート内で見つかった値は自動で列として追加されます。",
-  "settings.predefinedValuesDesc": "列の値を1行に1つ入力。この順序で表示されます。",
-  "settings.predefinedAddField": "グルーピングプロパティを追加",
-  "settings.predefinedAddFieldDesc": "カードのグルーピングに使うfrontmatterフィールド名。",
-  "settings.predefinedFieldPlaceholder": "例: ステータス",
   "settings.quickActionHeading": "クイックアクションボタン",
   "settings.quickActionDesc": "カード上にプロパティを即座に書き換えるボタンを表示します。",
   "settings.quickActionShow": "ボタンを表示",

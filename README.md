@@ -15,16 +15,6 @@ Task notes are the single source of truth: creating, moving, and deleting cards 
 - Click a card title to open the note (if the note is already open in another tab, jumps to that tab instead of opening a duplicate)
 - File changes, creations, and deletions are detected in real time and the board refreshes automatically
 
-### Predefined board columns (initial setup)
-
-You can predefine the grouping property (e.g. `status`) and its column values (e.g. To do / In progress / Done) in the plugin settings.
-
-- Predefined columns always appear on the board in the defined order, **even before any note uses those values** — so you can start adding cards right after installing
-- Values found in your notes are appended automatically as extra columns (existing values are never lost)
-- Predefined values also show up as suggestions in the card creation modal and as lane/column choices in the ⚙ board options
-- Multiple properties can be registered, each with its own list of column values
-- `status: To do / In progress / Done` is registered by default; rename or delete it freely to match your own properties
-
 ### First-run setup (automatic sample tasks)
 
 The first time you open the board, if the task folder contains no notes yet, the plugin creates the folder and seeds three sample tasks.
@@ -126,14 +116,13 @@ Configure which frontmatter fields are shown as tags on cards.
 1. Enable the plugin
 2. Click the dashboard icon in the left ribbon, or run `Property Kanban: Open board` from the command palette
 3. The board opens. On first open, the task folder and three sample tasks with a short usage guide are created automatically, laid out in To do / In progress / Done columns for the `status` property
-4. To match your own notes, define your property name (e.g. `state`) and column values in Settings → "Board columns (initial setup)", then pick that property as the lane in the ⚙ board options
+4. To match your own notes, pick any frontmatter property (e.g. `state`) as the lane in the ⚙ board options — columns are generated automatically from the values your notes actually use
 
 ## Settings
 
 | Setting | Description | Default |
 |---------|-------------|---------|
 | Task folder | Folder path where task notes are stored | `tasks` |
-| Board columns (initial setup) | Grouping property and the column values that always appear (one per line) | `status`: To do / In progress / Done |
 | Card display properties | Frontmatter fields shown on cards, with colors | category, project, due, created |
 | Quick action: show button | Show the quick action button on cards | off |
 | Quick action: button label | Text shown on the card | `Done` |
